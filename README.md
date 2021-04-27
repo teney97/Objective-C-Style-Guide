@@ -57,11 +57,13 @@ if (50 == height) { ... }
 }
 ```
 
-But，该方法不是万能的，有种情况下还得你自己注意拼写，那就是当被判断值与判断值都为变量的情况：
+But，该写法不是万能的，有种情况下还得你自己注意拼写，那就是当被判断值与判断值都为变量的情况：
 
 ```objc
 if (obj1 == obj2) { ... }
 ```
+
+尽管该写法可以有效避免我们犯错，但它的可读性是有所降低的。如果你能铭记这个风险，时刻提醒自己要注意，那么使用 `if (obj == nil)` 更好。 
 
 如果你使用 Swift，你就不必担心这个问题，因为在 Swift 中，赋值符 `=` 不再有返回值，这样就消除了手误将判等运算符 `==` 写成赋值符导致代码错误的缺陷。由此你也可以看出 Swift 比 Objective-C 更安全。
 
@@ -73,3 +75,42 @@ width = height = 100; // height = 100, width = 100
 // Swift
 width = height = 100; // Error: Cannot assign value of type '()' to type 'typeOfWidth'
 ```
+
+#### 使用布尔表达式，而不是隐式地与 0 做对比
+
+在 OC 中，if 语句中的条件可以是一个非 0 值，它将隐式地与 0 做对比，然后返回一个布尔值。你会经常看到以下这样的代码，你也可能习惯写这样的代码。
+
+```objc
+- (NSMutableArray *)mArray {
+    if (!_mArray) {
+        _mArray = [NSMutableArray arrayWithCapacity:10];
+    }
+    return _mArray;
+}
+```
+
+该写法确实提高了代码简洁性，而且它可以避免手误将 `==` 写成 `=` 情况的发生，但它的可读性不如布尔表达式，所以我更推荐以下的写法：
+
+```objc
+- (NSMutableArray *)mArray {
+    if (nil == _mArray) { // or (_mArray == nil)
+        _mArray = [NSMutableArray arrayWithCapacity:10];
+    }
+    return _mArray;
+}
+```
+
+对于布尔值，我更偏向于直接使用，而不是再将其转换为布尔表达式：
+
+```objc
+// Preferred:
+if (isEnabled) { ... }
+if (!isEnabled) { ... }
+// Not Preferred:
+if (isEnabled == YES) { ... }
+if (isEnabled == NO) { ... }
+```
+
+但是，我的前辈更建议布尔值也转换为布尔表达式，以提高可读性，所以我觉得这个写法还是看个人习惯吧，或许以后我也会改变风格。
+
+在 Swift 中，if 语句中的条件必须是一个布尔表达式，这意味着像 `if score { ... }` 这样的代码将报错，而不会隐形地与 0 做对比。所以，养成这个编码习惯也能让我们更好地向 Swift 过渡。
