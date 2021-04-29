@@ -6,6 +6,7 @@
 * [1.将常量前置，以避免手误将 == 写成 = （Yoda Condition）](#将常量前置以避免手误将--写成--yoda-condition)
 * [2.使用布尔表达式，而不是隐式地与 0 做对比](#使用布尔表达式而不是隐式地与-0-做对比)
 * [3.复杂条件处理1 - 提高可调式性](#复杂条件处理1---提高可调式性)
+* [4.复杂条件处理2 - 前置计算复杂度低的子条件](#复杂条件处理2---前置计算复杂度低的子条件)
 
 
 ## if 语句
@@ -179,6 +180,30 @@ if (isObj1Success || isObj2Success || isObj3Success) {
 if ([obj1 isSuccess] 
     || [obj2 isSuccess] 
     || ([obj3 isSuccess] && [obj3 isSupport])) {
+    // ...
+}
+```
+
+### 复杂条件处理2 - 前置计算复杂度低的子条件
+
+在上一点中我们提到，要利用 if 语句中使用复杂条件支持短路求值的天然优势来优化代码。为了代码最优化，我们需要将计算复杂度低的子条件前置。
+
+以下是优化前的一段示例代码：
+
+```objc
+if ([obj isSupportWithComplexCalculation] 
+    || [string isEqualToString:@"success"] 
+    || aBoolValue) {
+    // ...
+}
+```
+
+以下是优化后的代码：
+
+```objc
+if (aBoolValue
+    || [string isEqualToString:@"success"] 
+    || [obj isSupportWithComplexCalculation] ) {
     // ...
 }
 ```
