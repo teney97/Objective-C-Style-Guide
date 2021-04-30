@@ -232,7 +232,7 @@ if (aBoolValue
 
 >什么是卫语句？
 >
-卫（guard）是布尔表达式，其结果必须为真，程序才能执行下去。卫语句用于代码的提前退出，可用来减少代码嵌套层级使代码更扁平，比如把 `if guard { ... }` 替代为：`if not guard: return; ...`
+>卫（guard）是布尔表达式，其结果必须为真，程序才能执行下去。卫语句用于代码的提前退出，可用来减少代码嵌套层级使代码更扁平，比如把 `if guard { ... }` 替代为：`if not guard: return; ...`
 >
 >参考自：[wiki: 卫语句](https://www.hk.wiiaa.top/wiki/%E5%8D%AB%E8%AF%AD%E5%8F%A5)
 
