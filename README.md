@@ -125,10 +125,29 @@ if (isEnabled == YES) { ... }
 if (isEnabled == NO) { ... }
 ```
 
-但是，我的前辈更建议布尔值也转换为布尔表达式，以提高可读性，所以我觉得这个写法还是看个人习惯吧，或许以后我也会改变风格。
+但是，我的前辈更建议布尔值也转换为布尔表达式，以提高可读性，有时候确实如此。
+
+比如：
+
+```objc
+// Preferred:
+if (self.view.hidden == NO) { ... }
+// Not Preferred:
+if (!self.view.hidden) { ... }
+```
+
+因为 `hidden` 一词本身就带着相反的意思（`hidden == !show`），`!hidden` 对反取反，我觉得可读性不是很高，如果 `UIView` 提供的是 `show` 属性而不是 `hidden`，那我更倾向于：
+
+```objc
+// Preferred:
+if (self.view.show) { ... }
+if (!self.view.show) { ... }
+// Not Preferred:
+if (self.view.show == YES) { ... }
+if (self.view.show == NO) { ... }
+```
 
 在 Swift 中，if 语句中的条件必须是一个布尔值 or 布尔表达式，这意味着像 `if score { ... }` 这样的代码将报错，而不会隐式地与 0 做对比。所以，养成这个编码习惯也能让我们更好地向 Swift 过渡。
-
 
 ### 复杂条件处理1 - 提高可调式性
 
