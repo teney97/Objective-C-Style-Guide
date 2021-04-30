@@ -309,3 +309,5 @@ guard obj!.isSuccess() else {
 像 if 语句一样，guard 的执行取决于一个布尔值或布尔表达式。我们可以使用 guard 语句来要求条件必须为真时，才执行 guard 语句后的代码。不同于 if 语句，一个 guard 语句总是有一个 else 从句，如果条件不为真则执行 else 从句中的代码，且强制在 else 从句中转移控制以退出 guard 语句。而 if 语句则没有这么严格的要求。可以说 guard 语句是真正意义上的卫语句，而 if 语句只是我们将它写成了卫语句的形式。
 
 另外，之前在网上有看到说，老外觉得在 if 语句条件中取反条件不好理解，而 guard 语句可读性更高。
+
+参考：[极客时间 - 张杰 - 《Swift 核心技术与实战》](https://time.geekbang.org/course/intro/100034001)
