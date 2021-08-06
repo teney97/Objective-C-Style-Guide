@@ -9,8 +9,10 @@
 * [4.复杂条件处理2 - 前置计算复杂度低的子条件](#复杂条件处理2---前置计算复杂度低的子条件)
 * [5.使用卫语句提前退出](#使用卫语句提前退出)
 
-[头文件导入](#头文件导入)
+[头文件引入](#头文件引入)
 * [1.在类的头文件中尽量少引入其他头文件](#在类的头文件中尽量少引入其他头文件)
+* [2.头文件引入整理](#头文件引入整理)
+
 
 ## if 语句
 
@@ -387,5 +389,51 @@ guard obj!.isSuccess() else {
 
 
 总之，每次在头文件中 `#import` 其他头文件之前，都想想是否有必要。
+
+
+### 头文件引入整理
+
+**Not Preferred:**
+
+```objectivec
+#import <Foundation/Foundation.h>
+#import "HTView.h"
+#import <HTModuleA/HTModuleA.h>
+#import <Masonry/Masonry.h>
+#import <SDWebImage/SDWebImage.h>
+#import "HTViewModel.h"
+#import <HTModuleB/HTModuleB.h>
+#import "HTCollectionCell.h"
+#import <HTModuleC/HTModuleC.h>
+#import <ReactiveObjC/ReactiveObjC.h>
+#import <objc/runtime.h>
+```
+
+一般情况下大家都习惯在最下方插入新的 `#import`。这样导致头文件引入杂乱无章；如果头文件引入过多，当你要插入新的 `#import` 时就要花更多时间查找该头文件是否已经引入，也很容易导致一个头文件被 `#import` 两次，虽然这不会造成问题（该情况确实存在，笔者亲眼见过多次）。
+
+笔者曾对整个工程的头文件引入进行了规范整理，建议以 `系统`、`当前`、`自家`、`三方` Module 这样的 `四层结构` 进行划分。
+
+**Preferred:**
+
+```objectivec
+// 系统 Module 的头文件
+#import <Foundation/Foundation.h>
+#import <objc/runtime.h>
+// 当前 Module 的头文件
+#import "HTView.h"
+#import "HTCollectionCell.h"
+#import "HTViewModel.h"
+// 自家 Module 的头文件
+#import <HTModuleA/HTModuleA.h>
+#import <HTModuleB/HTModuleB.h>
+#import <HTModuleC/HTModuleC.h>
+// 三方 Module 的头文件
+#import <Masonry/Masonry.h>
+#import <SDWebImage/SDWebImage.h>
+#import <ReactiveObjC/ReactiveObjC.h>
+```
+
+如果引入的头文件更多，还可以再细分出 `分类层`、`协议层` 等等。当然，这时候你也要考虑一下该类职责是否单一。
+
 
 
