@@ -2,6 +2,9 @@
 
 ## 目录
 
+[基本规范](#基本规范)
+* [协议命名](#协议命名)
+
 [if 语句](#if-语句)
 * [1.将常量前置，以避免手误将 == 写成 = （Yoda Condition）](#将常量前置以避免手误将--写成--yoda-condition)
 * [2.使用布尔表达式，而不是隐式地与 0 做对比](#使用布尔表达式而不是隐式地与-0-做对比)
@@ -18,6 +21,37 @@
 
 [运算符](#运算符)
 * [1.使用三目运算符时将默认值后置](#使用三目运算符时将默认值后置)
+
+
+## 基本规范
+
+### 协议命名
+
+**Preferred:**
+
+```objectivec
+iHTView
+```
+
+**Not Preferred:**
+
+```objectivec
+HTViewProtocol
+```
+
+以 `i` 开头而不是以 `Protocol` 结尾，有以下优点：
+
+* 命名简短
+* 更方便检索
+* 更方便拼写（代码提示）
+
+如果是 `delegate`、`dataSource` 等具有特殊意义的协议，建议再加上后缀：
+
+```objectivec
+iHTViewDelegate
+iHTViewDataSource
+```
+
 
 ## if 语句
 
