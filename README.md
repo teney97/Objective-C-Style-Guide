@@ -1,5 +1,7 @@
 # Objective-C-Style-Guide
 
+> 争取一周两三更吧。
+
 ## 目录
 
 [基本规范](#基本规范)
