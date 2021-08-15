@@ -2,32 +2,10 @@
 
 > 争取一周两三更吧。
 
-## 目录
-
-[基本规范](#基本规范)
-* [协议命名](#协议命名)
-
-[if 语句](#if-语句)
-* [1.将常量前置，以避免手误将 == 写成 = （Yoda Condition）](#将常量前置以避免手误将--写成--yoda-condition)
-* [2.使用布尔表达式，而不是隐式地与 0 做对比](#使用布尔表达式而不是隐式地与-0-做对比)
-* [3.复杂条件处理1 - 提高可调式性](#复杂条件处理1---提高可调式性)
-* [4.复杂条件处理2 - 前置计算复杂度低的子条件](#复杂条件处理2---前置计算复杂度低的子条件)
-* [5.使用卫语句提前退出](#使用卫语句提前退出)
-
-[头文件引入](#头文件引入)
-* [1.在类的头文件中尽量少引入其他头文件](#在类的头文件中尽量少引入其他头文件)
-* [2.头文件引入整理](#头文件引入整理)
-
-[Block](#block)
-* [1.避免在 block 内部直接使用成员变量](#避免在-block-内部直接使用成员变量)
-
-[运算符](#运算符)
-* [1.使用三目运算符时将默认值后置](#使用三目运算符时将默认值后置)
-
-
 ## 基本规范
 
-### 协议命名
+<details>
+    <summary> 协议命名 </summary>
 
 **Preferred:**
 
@@ -54,10 +32,13 @@ iHTViewDelegate
 iHTViewDataSource
 ```
 
+</details>
 
+    
 ## if 语句
 
-### 将常量前置，以避免手误将 == 写成 = （Yoda Condition）
+<details>
+    <summary> 将常量前置，以避免手误将 == 写成 = （Yoda Condition） </summary>
 
 在 OC 中，赋值符 `=` 会有返回值，这导致我们有时候可能会手误将 `==` 写成 `=` 导致代码错误而不能尽早地发现问题。
 
@@ -135,9 +116,14 @@ width = height = 100; // height = 100, width = 100
 // Swift
 width = height = 100; // Error: Cannot assign value of type '()' to type 'typeOfWidth'
 ```
+    
+</details>
 
-### 使用布尔表达式，而不是隐式地与 0 做对比
 
+
+<details>
+    <summary> 使用布尔表达式，而不是隐式地与 0 做对比 </summary>
+    
 在 OC 中，if 语句中的条件可以是一个非 0 值，它将隐式地与 0 做对比，然后返回一个布尔值。你会经常看到以下这样的代码，你也可能习惯写这样的代码。
 
 ```objc
@@ -194,8 +180,11 @@ if (self.view.show == NO) { ... }
 ```
 
 在 Swift 中，if 语句中的条件必须是一个布尔值 or 布尔表达式，这意味着像 `if score { ... }` 这样的代码将报错，而不会隐式地与 0 做对比。所以，养成这个编码习惯也能让我们更好地向 Swift 过渡。
-
-### 复杂条件处理1 - 提高可调式性
+    
+</details>
+ 
+<details>
+    <summary> 复杂条件处理1 - 提高可调式性 </summary>
 
 当 if 语句中存在复杂条件时代码可调式性会降低，就如：
 
@@ -248,8 +237,10 @@ if ([obj1 isSuccess]
     // ...
 }
 ```
+</details>
 
-### 复杂条件处理2 - 前置计算复杂度低的子条件
+<details>
+    <summary> 复杂条件处理2 - 前置计算复杂度低的子条件 </summary>
 
 在上一点中我们提到，要利用 if 语句中使用复杂条件支持短路求值的天然优势来优化代码。为了代码最优化，我们需要将计算复杂度低的子条件前置。
 
@@ -272,8 +263,10 @@ if (aBoolValue
     // ...
 }
 ```
+</details>
 
-### 使用卫语句提前退出
+<details>
+    <summary> 使用卫语句提前退出 </summary>
 
 >什么是卫语句？
 >
@@ -355,12 +348,12 @@ guard obj!.isSuccess() else {
 
 另外，之前在网上有看到说，老外觉得在 if 语句条件中取反条件不好理解，而 guard 语句可读性更高。
 
-参考：[极客时间 - 张杰 - 《Swift 核心技术与实战》](https://time.geekbang.org/course/intro/100034001)
-
+</details>
 
 ## 头文件引入
 
-### 在类的头文件中尽量少引入其他头文件
+<details>
+    <summary> 在类的头文件中尽量少引入其他头文件 </summary>
 
 在类的头文件中尽量少引入其他头文件，将引入头文件的时机尽量延后，只在确有需要时才引入，这样可以：
 
@@ -428,11 +421,12 @@ guard obj!.isSuccess() else {
 
 对于不得不在头文件中引入其他头文件的情况，如果是引入其他 Module 的头文件，那么导入头文件越少越好，参照 `#import <Module/aClass.h>`，而非 `#import <Module/Module.h>`。
 
-
 总之，每次在头文件中 `#import` 其他头文件之前，都想想是否有必要。
 
+</details>
 
-### 头文件引入整理
+<details>
+    <summary> 头文件引入整理 </summary>
 
 **Not Preferred:**
 
@@ -476,10 +470,13 @@ guard obj!.isSuccess() else {
 
 如果引入的头文件更多，还可以再细分出 `分类层`、`协议层` 等等。当然，这时候你也要考虑一下该类职责是否单一。
 
+</details>
 
+    
 ## Block
 
-### 避免在 block 内部直接使用成员变量
+<details>
+    <summary> 避免在 block 内部直接使用成员变量 </summary>
 
 当我们在 block 内部直接使用 _variable 成员变量时，编译器会给我们警告：`Block implicitly retains self; explicitly mention 'self' to indicate this is intended behavior`。
 
@@ -508,10 +505,13 @@ self.block = ^{
 ```
 
 你可能会觉得这种困扰没什么，如果你使用 `@weakify` 和 `@strongify` 那确实不会造成循环引用，因为 `@strongify` 声明的变量名就是 self。那如果你使用 `__weak typeof(self) weak_self = self;` 和 `__strong typeof(weak_self) strong_self = weak_self` 呢？
+    
+</details>
 
 ## 运算符
 
-### 使用三目运算符时将默认值后置
+<details>
+    <summary> 使用三目运算符时将默认值后置 </summary>
 
 Preferred: 
 
@@ -535,4 +535,6 @@ a != nil ? a! : b
 ```
 
 >官方给出的使用条件是：a 必须是可选类型，b 的类型需和 a 存储值的类型一致。但实际上，这两个条件不满足也可以，a 可以是非可选类型，b 的类型也可以和 a 存储值的类型不一致，但是从该运算符的语义来看，最好还是遵循官方的条件来使用。
+    
+</details>
 
