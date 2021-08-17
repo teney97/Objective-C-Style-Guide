@@ -5,7 +5,10 @@
 ## 目录
 
 基本规范
-* [协议命名](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/基本规范｜协议命名.md)
+* [1.协议命名](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/基本规范｜协议命名.md)
+
+语法
+* [1.多用字面量语法，少用与之等价的方法](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E8%AF%AD%E6%B3%95%EF%BD%9C%E5%A4%9A%E7%94%A8%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%EF%BC%8C%E5%B0%91%E7%94%A8%E4%B8%8E%E4%B9%8B%E7%AD%89%E4%BB%B7%E7%9A%84%E6%96%B9%E6%B3%95%20.md)
 
 if 语句
 * [1.使用 Yoda Condition，将常量前置，以避免手误将 == 写成 =](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜Yoda%20Condition.md)
