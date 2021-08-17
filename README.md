@@ -18,6 +18,9 @@ if 语句
 * [4.复杂条件处理2 - 前置计算复杂度低的子条件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜复杂条件处理2%20-%20前置计算复杂度低的子条件.md)
 * [5.使用卫语句提前退出](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜使用卫语句提前退出.md)
 
+枚举
+* [1.枚举在 switch 里的用法规范](https://github.com/teney97/Objective-C-Style-Guide/edit/main/Content/枚举｜枚举在%20switch%20里的用法规范.md)
+
 头文件引入
 * [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜在类的头文件中尽量少引入其他头文件.md)
 * [2.头文件引入整理](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜头文件引入整理.md)
