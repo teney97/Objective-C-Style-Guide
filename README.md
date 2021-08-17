@@ -20,6 +20,7 @@ if 语句
 
 枚举
 * [1.枚举在 switch 里的用法规范](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜枚举在%20switch%20里的用法规范.md)
+* [2.优雅地定义类型常量枚举]
 
 头文件引入
 * [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜在类的头文件中尽量少引入其他头文件.md)
@@ -27,8 +28,27 @@ if 语句
 
 Block
 * [1.避免在 block 内部直接使用成员变量](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/Block｜避免在%20block%20内部直接使用成员变量.md)
+* 2.为常用的 block 类型创建 typedef
 
 运算符
 * [1.使用三目运算符时将默认值后置](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/运算符｜使用三目运算符时将默认值后置.md)
 
+属性
+* 1.在对象内部到底该通过属性还是成员变量来读写数据？
+* 2.在设置属性所对应的成员变量时，一定要遵从该属性所声明的语义
+* 3.不要忽略可空性关键字
+* 4.weak 和 unsafe_unretained 如何选择？
+* 5.为了达到封装的目的，我们应该只在确有必要时才将属性对外暴露，并且尽量把对外暴露的属性设为 readonly
+* 6.尽量别用 KVC
+
+API 设计
+* 1.方法该设计成类方法还是实例方法？
+* 2.分类中的属性及方法命名需要加前缀
+
+协议
+* 1.通过协议提供匿名对象
+
+内存管理
+* 1.在 dealloc 方法中只释放引用并解除监听
+* 2.不要使用 retainCount
 
