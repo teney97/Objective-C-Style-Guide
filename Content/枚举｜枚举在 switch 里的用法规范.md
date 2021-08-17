@@ -11,7 +11,7 @@ typedef NS_ENUM(NSUInteger, EOCConnectionState) {
     EOCConnectionStateConnected,
 };
 
-switch (connectionState) { // Enumeration value 'EOCConnectionStateConnected' not handled in switch
+switch (connectionState) { // ⚠️ Enumeration value 'EOCConnectionStateConnected' not handled in switch
     case EOCConnectionStateDisconnected:
         // ...
         break;
