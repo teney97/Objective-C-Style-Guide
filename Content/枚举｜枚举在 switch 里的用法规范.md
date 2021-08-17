@@ -25,3 +25,4 @@ switch (connectionState) { // Enumeration value 'EOCConnectionStateConnected' no
 
 当然，如果你只是想在 switch 中处理部分枚举类型，加上 default 分支吧！
 
+> 参考：《Effective Objective-C 2.0》第 5 条。
