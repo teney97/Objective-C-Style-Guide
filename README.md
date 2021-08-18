@@ -28,7 +28,7 @@ if 语句
 
 Block
 * [1.避免在 block 内部直接使用成员变量](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/Block｜避免在%20block%20内部直接使用成员变量.md)
-* 2.为常用的 block 类型创建 typedef
+* [2.为常用的 block 类型创建 typedef](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/Block｜为常用的%20block%20类型创建%20typedef.md)
 
 运算符
 * [1.使用三目运算符时将默认值后置](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/运算符｜使用三目运算符时将默认值后置.md)
