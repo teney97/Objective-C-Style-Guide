@@ -23,6 +23,8 @@ switch (connectionState) { // ⚠️ Enumeration value 'EOCConnectionStateConnec
 
 而如果加了 default 分支，编译器就不会给警告了。这就不能确保 switch 语句能正确处理所有的枚举类型。
 
+在 Swift 中，我们也可以根据实际使用场景这样做，如果 `switch` 语句没有穷举所有情况，那么代码将无法通过编译，强制穷举确保了枚举成员不会被意外遗漏。这点比 OC 更严格。
+
 当然，如果你只是想在 switch 中处理部分枚举类型，加上 default 分支吧！
 
 > 参考：《Effective Objective-C 2.0》第 5 条。
