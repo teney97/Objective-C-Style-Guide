@@ -20,7 +20,7 @@ if 语句
 
 枚举
 * [1.枚举在 switch 里的用法规范](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜枚举在%20switch%20里的用法规范.md)
-* [2.优雅地定义类型常量枚举](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜优雅地定义类型常量枚举.md)
+* [2.优雅地定义类型常量枚举](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举_优雅地定义类型常量枚举.md)
 
 头文件引入
 * [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜在类的头文件中尽量少引入其他头文件.md)
