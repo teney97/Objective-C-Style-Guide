@@ -1,4 +1,4 @@
-### 为常用的 block 类型创建 typedef
+## 为常用的 block 类型创建 typedef
 
 以 typedef 关键字重新定义块类型：
 

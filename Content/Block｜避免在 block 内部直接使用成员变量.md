@@ -1,4 +1,4 @@
-### 避免在 block 内部直接使用成员变量
+## 避免在 block 内部直接使用成员变量
 
 当我们在 block 内部直接使用 _variable 成员变量时，编译器会给我们警告：`Block implicitly retains self; explicitly mention 'self' to indicate this is intended behavior`。
 
