@@ -35,15 +35,16 @@ Block
 混编：
 * [1.为 Objective-C 添加枚举宏，改善混编体验](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%B8%BA%20Objective-C%20%E6%B7%BB%E5%8A%A0%E6%9E%9A%E4%B8%BE%E5%AE%8F%EF%BC%8C%E6%94%B9%E5%96%84%E6%B7%B7%E7%BC%96%E4%BD%93%E9%AA%8C.md)
 * [2.使 Objective-C API 在 Swift 中不可用](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%BD%BF%20Objective-C%20API%20%E5%9C%A8%20Swift%20%E4%B8%AD%E4%B8%8D%E5%8F%AF%E7%94%A8.md)
+* [3.为 Swift 重命名 Objective-C API](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%B8%BA%20Swift%20%E9%87%8D%E5%91%BD%E5%90%8D%20Objective-C%20API.md)
+* 在 Objective-C API 中指定可空性
 
 属性
 * 1.在对象内部到底该通过属性还是成员变量来读写数据？
 * 2.在设置属性所对应的成员变量时，一定要遵从该属性所声明的语义
-* 3.不要忽略可空性关键字
-* 4.weak 和 unsafe_unretained 如何选择？
-* 5.为了达到封装的目的，我们应该只在确有必要时才将属性对外暴露，并且尽量把对外暴露的属性设为 readonly
-* 6.在确有必要时使用懒加载
-* 7.尽量别用 KVC
+* 3.weak 和 unsafe_unretained 如何选择？
+* 4.为了达到封装的目的，我们应该只在确有必要时才将属性对外暴露，并且尽量把对外暴露的属性设为 readonly
+* 5.在确有必要时使用懒加载
+* 6.尽量别用 KVC
 
 API 设计
 * 1.方法该设计成类方法还是实例方法？
