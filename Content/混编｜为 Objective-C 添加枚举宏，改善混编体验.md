@@ -1,6 +1,6 @@
-# 为 Objective-C 添加枚举宏，改善混编体验
+## 为 Objective-C 添加枚举宏，改善混编体验
 
-## 写在前面
+### 写在前面
 
 使用 Objective-C 的你，是否对 `NS_CLOSED_ENUM`、`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`  这几个枚举宏感到陌生呢？笔者对修饰 NSNotificationName 的 `NS_EXTENSIBLE_STRING_ENUM` 宏比较好奇，便展开了探索，于是就有了本文。
 
@@ -11,7 +11,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotificati
 UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
 ```
 
-## 优雅地声明类型常量枚举
+### 优雅地声明类型常量枚举
 
 在 C 和 Objective-C 中，枚举不像 Swift 中的那么强大，只能给枚举成员赋予一个整型值。这给我们带来了诸多不便，例如，我们有时候需要给枚举成员关联字符串，不得不额外提供函数或者其它方式，来做枚举与字符串之间的映射转换。对此，我们可以使用一组类型常量集来声明枚举。又或者，在 Objective-C 中，我们经常会使用 NSString 类型常量来当作 NSDictionary 的 key、NSUserDefaults 的 key、notificationName 等等。例如：
 
@@ -91,7 +91,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotificati
 UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
 ```
 
-## Objective-C 枚举宏
+### Objective-C 枚举宏
 
 在 [Apple｜Grouping Related Objective-C Constants](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/grouping_related_objective-c_constants) 中，Apple 详细列举了 `NS_ENUM`、`NS_CLOSED_ENUM`、`NS_OPTIONS`、`NS_TYPED_ENUM`、`NS_TYPED_EXTENSIBLE_ENUM` 等宏的使用场景，用好它们以改善在混编时在 Swift 中的编程体验。另外，Apple 建议弃用 `NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM` 而改用 `NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`。
 
@@ -101,7 +101,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 * NS_TYPED_ENUM：用于类型常量枚举
 * NS_TYPED_EXTENSIBLE_ENUM：用于可扩展的类型常量枚举
 
-### NS_ENUM
+#### NS_ENUM
 
 用于声明简单的枚举，这个大家都很熟悉了。
 
@@ -126,7 +126,7 @@ enum UITableViewCellStyle: Int {
 let style = UITableViewCellStyle.default
 ```
 
-### NS_CLOSED_ENUM
+#### NS_CLOSED_ENUM
 
 用于声明不会变更枚举成员的简单的枚举（简称 “冻结枚举” ），对应 Swift 中的 `@frozen` 关键字。冻结枚举对于希望在 switch 语句中匹配有限状态集的时候非常有用，这个有限状态集是一个完整的集合，覆盖了所有情况，将来不会再有其他新的情况。
 
@@ -169,7 +169,7 @@ typedef NS_CLOSED_ENUM(NSInteger, NSComparisonResult) {
 * [Swift 5 Frozen enums](https://useyourloaf.com/blog/swift-5-frozen-enums/)
 * [Swiftjectivec｜NS_CLOSED_ENUM](https://www.swiftjectivec.com/ns_closed_enum/)
 
-### NS_OPTIONS
+#### NS_OPTIONS
 
 用于声明可选类型枚举，这个大家也都很熟悉了。
 
@@ -201,7 +201,7 @@ public struct UIViewAutoresizing: OptionSet {
 let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 ```
 
-### NS_TYPED_ENUM
+#### NS_TYPED_ENUM
 
 用于声明类型常量枚举，不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
 
@@ -231,7 +231,7 @@ struct TrafficLightColor: RawRepresentable, Equatable, Hashable {
 let color = TrafficLightColor.red
 ```
 
-### NS_TYPED_EXTENSIBLE_ENUM
+#### NS_TYPED_EXTENSIBLE_ENUM
 
 用于声明可扩展的类型常量枚举。在导入到 Swift 中时，它生成的 Struct 与 NS_TYPED_ENUM 生成的 Struct 的区别在于多了一个初始化器。
 
@@ -259,11 +259,11 @@ extension FavoriteColor {
 }
 ```
 
-## 小结
+### 小结
 
 通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更 Swift。 
 
-## 参考
+### 参考
 
 * [Apple｜Grouping Related Objective-C Constants](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/grouping_related_objective-c_constants)
 * [Apple｜macOS Mojave 10.14 Release Notes - Foundation Release Notes](https://developer.apple.com/documentation/macos-release-notes/foundation-release-notes#3035774)
