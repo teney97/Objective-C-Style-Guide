@@ -20,7 +20,6 @@ if 语句
 
 枚举
 * [1.枚举在 switch 里的用法规范](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜枚举在%20switch%20里的用法规范.md)
-* [2.优雅地声明类型常量枚举](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜优雅地声明类型常量枚举.md)
 
 头文件引入
 * [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜在类的头文件中尽量少引入其他头文件.md)
@@ -32,6 +31,10 @@ Block
 
 运算符
 * [1.使用三目运算符时将默认值后置](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/运算符｜使用三目运算符时将默认值后置.md)
+
+混编：
+
+* [1.为 Objective-C 添加枚举宏，改善混编体验](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为 Objective-C 添加枚举宏，改善混编体验.md)
 
 属性
 * 1.在对象内部到底该通过属性还是成员变量来读写数据？

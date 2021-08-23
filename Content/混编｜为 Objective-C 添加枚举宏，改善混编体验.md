@@ -1,4 +1,4 @@
-# 优雅地声明类型常量枚举
+# 为 Objective-C 添加枚举宏
 
 ## 写在前面
 
@@ -93,7 +93,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 
 ## Objective-C 枚举宏
 
-在 [Apple｜Grouping Related Objective-C Constants](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/grouping_related_objective-c_constants) 中，Apple 详细列举了 `NS_ENUM`、`NS_CLOSED_ENUM`、`NS_OPTIONS`、`NS_TYPED_ENUM`、`NS_TYPED_EXTENSIBLE_ENUM` 等宏的使用场景。另外，Apple 建议弃用 `NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM` 而改用 `NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`。
+在 [Apple｜Grouping Related Objective-C Constants](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/grouping_related_objective-c_constants) 中，Apple 详细列举了 `NS_ENUM`、`NS_CLOSED_ENUM`、`NS_OPTIONS`、`NS_TYPED_ENUM`、`NS_TYPED_EXTENSIBLE_ENUM` 等宏的使用场景，用好它们以改善在混编时在 Swift 中的编程体验。另外，Apple 建议弃用 `NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM` 而改用 `NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`。
 
 * NS_ENUM：用于简单的枚举
 * NS_CLOSED_ENUM：用于不会变更枚举成员的简单的枚举（简称 “冻结枚举” ）
@@ -261,7 +261,7 @@ extension FavoriteColor {
 
 ## 小结
 
-通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更 Swift。 
+通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更 Swift。 
 
 ## 参考
 
