@@ -45,9 +45,11 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 接下来我们来看看，如何通过使用 NS_REFINED_FOR_SWIFT 做一个 API 适配。
 
-1. 首先，将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中。该 Objective-C API 在导入到 Swift 中时，会以双下划线 (`__`) 开头重命名，这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
+#### 1. 将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中
 
-   > 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 NS_REFINED_FOR_SWIFT 做 API 适配，那就遵守规范吧！
+首先，将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中。该 Objective-C API 在导入到 Swift 中时，会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码提示。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
+
+> 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 NS_REFINED_FOR_SWIFT 做 API 适配，那就遵守规范吧！
 
 ```objectivec
 @interface Color : NSObject
@@ -71,8 +73,40 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
   let color = Color(__color: .red)
   ```
 
+* 如果是 getter 或 setter 方法
 
+  ```swift
+  // Objective-C API
+  @property (nonatomic, assign) NSString *name NS_REFINED_FOR_SWIFT;
+  // Use in Swift
+  object.__name = "zhangsan"
+  ```
 
+* 其它方法，在方法名前面加 (`__`) 
+
+  ```swift
+  // Objective-C API
+  + (void)method NS_REFINED_FOR_SWIFT;
+  // Use in Swift
+  Color.__method()
+  ```
+
+#### 2. 在 Swift 中添加适配器 API
+
+在 Swift 中添加一个新的 API，来对 Objective-C API 进行适配改进。这里就是实现计算属性 rgba，在实现中调用以 (`__`) 开头重命名的 Objective-C API。
+
+```swift
+extension Color {
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        var r: CGFloat = 0.0
+        var g: CGFloat = 0.0
+        var b: CGFloat = 0.0
+        var a: CGFloat = 0.0
+        __getRed(red: &r, green: &g, blue: &b, alpha: &a)
+        return (red: r, green: g, blue: b, alpha: a)
+    }
+}
+```
 
 ### 参考
 
