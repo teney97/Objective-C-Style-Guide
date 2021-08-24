@@ -36,6 +36,7 @@ Block
 * [1.为 Objective-C 添加枚举宏，改善混编体验](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%B8%BA%20Objective-C%20%E6%B7%BB%E5%8A%A0%E6%9E%9A%E4%B8%BE%E5%AE%8F%EF%BC%8C%E6%94%B9%E5%96%84%E6%B7%B7%E7%BC%96%E4%BD%93%E9%AA%8C.md)
 * [2.使 Objective-C API 在 Swift 中不可用](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%BD%BF%20Objective-C%20API%20%E5%9C%A8%20Swift%20%E4%B8%AD%E4%B8%8D%E5%8F%AF%E7%94%A8.md)
 * [3.为 Swift 重命名 Objective-C API](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%B8%BA%20Swift%20%E9%87%8D%E5%91%BD%E5%90%8D%20Objective-C%20API.md)
+* [4.为 Swift 改进 Objective-C API 声明](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20改进%20Objective-C%20API%20声明.md)
 * 在 Objective-C API 中指定可空性
 
 属性
