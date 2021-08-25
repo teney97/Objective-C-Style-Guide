@@ -1,4 +1,4 @@
-## 混编｜使 Objective-C API 在 Swift 中不可用
+## 混编｜使 Objective-C API 在 Swift 中不可用（NS_SWIFT_UNAVAILABLE）
 
 * 使用 NS_SWIFT_UNAVAILABLE 宏使 Objective-C API 在 Swift 中不可用
 * 使用 NS_UNAVAILABLE 宏使 Objective-C API 在  Objective-C 和 Swift 中都不可用
