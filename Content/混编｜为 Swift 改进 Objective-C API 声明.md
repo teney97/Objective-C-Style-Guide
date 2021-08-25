@@ -229,7 +229,7 @@ extension MyClass {
   let color = Color(__color: .red)
   ```
 
-* 如果是 getter 或 setter 方法
+* 如果是属性，在属性前加 (`__`) 
 
   ```swift
   // Objective-C API
