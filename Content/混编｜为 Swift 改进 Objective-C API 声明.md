@@ -6,9 +6,8 @@
 
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
 * 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以让该 API 与其它 Swift API 更匹配
-* 当一组 Objective-C API 的关系为：其中有一个全能方法，其它方法均调用此方法，并为一些参数赋默认值；且方法数量较多时，可以使用该宏将一些简单的不常用的方法隐式地标记为不可用，留下全能方法以及常用的方法。利用 Swift 可以为参数赋默认值的优势，来减少这组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
+* 当一组 Objective-C API 的关系为：其中有一个全能方法，其它方法均调用此方法，并为一些参数赋默认值，而且方法数量较多时，可以使用该宏将一些简单的不常用的方法隐式地标记为不可用，留下全能方法以及常用的方法。利用 Swift 可以为参数赋默认值的优势，来减少这组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
 * 做一些兼容性的东西，比如 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 语言风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_Other）
-* 如果你只是简单的在 Swift 中定义一个新函数，函数里调用这个 Objective-C API，相当于是为 Swift 重命名 Objective-C API，这用 NS_SWIFT_NAME 就行，没必要使用 NS_REFINED_FOR_SWIFT
 
 ### Example_Apple
 
@@ -34,16 +33,6 @@ open func getRed(_ red: UnsafeMutablePointer<CGFloat>?,
                  green: UnsafeMutablePointer<CGFloat>?, 
                  blue: UnsafeMutablePointer<CGFloat>?, 
                  alpha: UnsafeMutablePointer<CGFloat>?)
-// 呃呃，red 参数标签被忽略掉了，我们可以使用 NS_SWIFT_NAME 宏改一改
-- (void)getRed:(nullable CGFloat *)red
-         green:(nullable CGFloat *)green
-          blue:(nullable CGFloat *)blue
-         alpha:(nullable CGFloat *)alpha NS_SWIFT_NAME(getRed(red:green:blue:alpha:));
-// OK，red 参数标签有了
-open func getRed(red: UnsafeMutablePointer<CGFloat>?, 
-                 green: UnsafeMutablePointer<CGFloat>?, 
-                 blue: UnsafeMutablePointer<CGFloat>?, 
-                 alpha: UnsafeMutablePointer<CGFloat>?)
 ```
 
 在调用时你需要传递四个 in-out 参数，显然这 API 在 Swift 中不够优雅。
@@ -54,12 +43,12 @@ var r: CGFloat = 0.0
 var g: CGFloat = 0.0
 var b: CGFloat = 0.0
 var a: CGFloat = 0.0
-color.getRed(red: &r, green: &g, blue: &b, alpha: &a)
+color.getRed(&r, green: &g, blue: &b, alpha: &a)
 ```
 
 如果你在 Swift 中设计这样一个 API，你会如何设计呢？
 
-可以设计一个计算属性，其类型是一个包含 rgba 四个元素的元组。
+可以设计一个只读计算属性，其类型是一个包含 rgba 四个元素的元组。
 
 ```swift
 var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
@@ -67,7 +56,7 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 怎么样？API 更简洁优雅了，使用起来也更方便，同时用到了 Swift 的特有类型 —— 元组。
 
-接下来我们来看看，如何通过使用 NS_REFINED_FOR_SWIFT 做一个 API 适配。
+接下来我们来看看，如何通过使用 NS_REFINED_FOR_SWIFT 做这样一个 API 适配。
 
 #### 1. 将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中
 
@@ -86,11 +75,9 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 @end
 ```
 
-> 注意：NS_REFINED_FOR_SWIFT 和 NS_SWIFT_NAME 一起用的话，NS_REFINED_FOR_SWIFT 不生效，而是以 NS_SWIFT_NAME 指定的名称重命名 Objective-C API。
-
 #### 2. 在 Swift 中添加适配器 API
 
-在 Swift 中添加一个新的 API，来对 Objective-C API 进行适配改进。这里就是实现计算属性 rgba，在实现中调用以 (`__`) 开头重命名的 Objective-C API。
+在 Swift 中添加一个新的 API，来对 Objective-C API 进行适配改进。这里就是实现只读计算属性 rgba，在实现中调用以 (`__`) 开头重命名的 Objective-C API。
 
 ```swift
 extension Color {
@@ -117,7 +104,9 @@ var a = color.rgba.alpha
 
 ### Example_SDWebImage
 
-接下来让我们看看 SDWebImage 是怎么使用 NS_REFINED_FOR_SWIFT 的。UIImageView (WebCache) 分类中扩展的方法非常多吧？总共有 9 个，这都是因为 Objective-C 中不能给方法参数赋默认值的缘故 😭。那么在 Objective-C API 导入到 Swift 时，如何巧妙地利用上 Swift 可以为参数赋默认值的优点呢？答案就是使用 NS_REFINED_FOR_SWIFT 宏，SDWebImage 为其中 4 个方法添加上了宏 NS_REFINED_FOR_SWIFT。
+接下来让我们看看 SDWebImage 是怎么使用 NS_REFINED_FOR_SWIFT 的。
+
+UIImageView (WebCache) 分类中扩展的方法非常多吧？总共有 9 个，这都是因为 Objective-C 中不能给方法参数赋默认值的缘故 😭。那么在 Objective-C API 导入到 Swift 时，如何巧妙地利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 NS_REFINED_FOR_SWIFT 宏，SDWebImage 为其中 4 个方法添加上了宏 NS_REFINED_FOR_SWIFT。
 
 ```objectivec
 // UIImageView+WebCache.h
@@ -134,11 +123,9 @@ var a = color.rgba.alpha
 
 这样在 Swift 中调用的时候只会提示另外 5 个 API。
 
-这样代码提示就不会出现这 4 个 API 了。
-
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1629873847844-91a338b5-9100-40b4-8e65-642b07e092a8.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
-你还是可以调用 `func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?)`：
+你还是可以调用 `sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?)`：
 
 ```swift
 let imageView = UIImageView()
@@ -168,10 +155,10 @@ open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, op
 - (void)sd_setImageWithURL:(nullable NSURL *)url
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
-                 completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Does not support in Swift");
+                 completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Unavailable");
 // Use in Swift
 let imageView = UIImageView()
-imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Does not support in Swift
+imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 ```
 
 我们再利用 `NS_SWIFT_UNAVAILABLE` 宏来看看这 4 个用 `NS_REFINED_FOR_SWIFT` 标记的 API 最终都是调用哪个方法：
@@ -179,20 +166,20 @@ imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(w
 ```swift
 let imageView = UIImageView()
 imageView.sd_setImage(with: nil)
-// Error: 'sd_setImage(with:completed:)' is unavailable in Swift: Does not support in Swift
+// Error: 'sd_setImage(with:completed:)' is unavailable in Swift: Unavailable
 imageView.sd_setImage(with: nil, placeholderImage: nil)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Does not support in Swift
+// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 imageView.sd_setImage(with: nil, placeholderImage: nil, options: .retryFailed)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Does not support in Swift
+// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 imageView.sd_setImage(with: nil, placeholderImage: nil, completed: nil)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Does not support in Swift
+// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 ```
 
-现在，你是不是对 `NS_REFINED_FOR_SWIFT` 宏的用法掌握地更多了呢？
+现在，你是不是对 `NS_REFINED_FOR_SWIFT` 宏的用法掌握得更多了呢？
 
 ### Example_Other
 
-该宏也用于类似以下场景：Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 语言风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等。
+NS_REFINED_FOR_SWIFT 宏也用于做一些兼容性的东西，比如 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 语言风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等。
 
 ```objectivec
 @interface MyClass : NSObject
@@ -220,7 +207,7 @@ extension MyClass {
 
 添加了 NS_REFINED_FOR_SWIFT 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
 
-* 如果是初始化方法，则在其第一个参数标签前加 (`__`) 
+* 如果是初始化方法，则在其第一个参数标签前面加 (`__`) 
 
   ```swift
   // Objective-C API
@@ -229,11 +216,11 @@ extension MyClass {
   let color = Color(__color: .red)
   ```
 
-* 如果是属性，在属性前加 (`__`) 
+* 如果是属性，在属性名前面加 (`__`) 
 
   ```swift
   // Objective-C API
-  @property (nonatomic, assign) NSString *name NS_REFINED_FOR_SWIFT;
+  @property (nonatomic, copy) NSString *name NS_REFINED_FOR_SWIFT;
   // Use in Swift
   object.__name = "zhangsan"
   ```
@@ -246,6 +233,8 @@ extension MyClass {
   // Use in Swift
   Color.__method()
   ```
+
+> 注意：NS_REFINED_FOR_SWIFT 和 NS_SWIFT_NAME 一起用的话，NS_REFINED_FOR_SWIFT 不生效，而是以 NS_SWIFT_NAME 指定的名称重命名 Objective-C API。
 
 ### 参考
 
