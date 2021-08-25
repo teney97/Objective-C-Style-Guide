@@ -1,11 +1,11 @@
 
 
-## 混编｜为 Swift 改进 Objective-C API 声明
+## 混编｜为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）
 
 使用宏 NS_REFINED_FOR_SWIFT 来改进 Objective-C API 声明。该宏在混编时主要参与适配器的工作，用途有：
 
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
-* 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以让该 API 与其它 Swift API 更匹配
+* 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以便该 API 与其它 Swift API 相匹配
 * 当一组 Objective-C API 的关系为：其中有一个全能方法，其它方法均调用此方法，并为一些参数赋默认值，而且方法数量较多时，可以使用该宏将一些简单的不常用的方法隐式地标记为不可用，留下全能方法以及常用的方法。利用 Swift 可以为参数赋默认值的优势，来减少这组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
 * 做一些兼容性的东西，比如 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 语言风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_Other）
 
@@ -60,9 +60,9 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 #### 1. 将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中
 
-首先，将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中。该 Objective-C API 在导入到 Swift 中时，会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码提示。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
+首先，将宏 NS_REFINED_FOR_SWIFT 作为后缀添加到 Objective-C API 中。该 Objective-C API 在导入到 Swift 中时，会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码提示，相当于隐藏了 API。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
 
-> 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 NS_REFINED_FOR_SWIFT 做 API 适配，那就遵守规范吧！
+> 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 NS_REFINED_FOR_SWIFT 做 API 适配，那就遵守规范吧，不要这样使用！
 
 ```objectivec
 @interface Color : NSObject

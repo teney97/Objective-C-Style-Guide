@@ -1,4 +1,4 @@
-## 混编｜为 Swift 重命名 Objective-C API
+## 混编｜为 Swift 重命名 Objective-C API（NS_SWIFT_NAME）
 
 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API。这样在混编时在 Swift 中调用到 Objective-C API 的地方就会使用指定的名称，而不是原来的名称，而且这不会影响到 Objective-C 代码，在 Objective-C 中还是使用原来的名称。
 
