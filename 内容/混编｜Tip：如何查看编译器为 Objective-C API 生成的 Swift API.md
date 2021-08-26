@@ -14,3 +14,6 @@
 
 掌握这个技巧很重要，它能帮助我们理解编译器为 Objective-C 接口生成的 Swift 接口是什么样的，以及帮助我们更好地优化 Objective-C API。
 
+### 参考
+
+* [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
