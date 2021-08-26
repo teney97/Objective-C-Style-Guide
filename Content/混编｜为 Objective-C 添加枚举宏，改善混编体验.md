@@ -17,9 +17,9 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 
 ```objectivec
 // Dicitonary keys
-NSString * const DCDictionaryKeyTitle    = @"title";
-NSString * const DCDictionaryKeySubtitle = @"subtitle";
-NSString * const DCDictionaryKeyCount    = @"count";
+FOUNDATION_EXTERN NSString * const DCDictionaryKeyTitle;
+FOUNDATION_EXTERN NSString * const DCDictionaryKeySubtitle;
+FOUNDATION_EXTERN NSString * const DCDictionaryKeyCount;
 
 // 在使用上则是这样：
 NSDictionary<NSString *, id> *dict = @{......};
@@ -32,18 +32,22 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 这在混编时，在 Swift 中的使用方式为：
 
 ```swift
-// Objective-C 的常数被自动转换成
-let DCDictionaryKeyTitle:    String = "title" 
-let DCDictionaryKeySubtitle: String = "subtitle" 
-let DCDictionaryKeyCount:    String = "count"
+// Objective-C 的常数被自动转换成 Swift 常量
+public let DCDictionaryKeyTitle		 : String
+public let DCDictionaryKeySubtitle : String
+public let DCDictionaryKeyCount		 : String
 
-// 使用：
-let dict: [String: Any] = [......]
+// 使用
+let dict:[String : Any] = [DCDictionaryKeyTitle		 : "a title",
+                           DCDictionaryKeySubtitle : "a subTitle",
+                           DCDictionaryKeyCount		 : 66]
 
 let title    = dict[DCDictionaryKeyTitle]    as! String 
 let subtitle = dict[DCDictionaryKeySubtitle] as! String 
 let count    = dict[DCDictionaryKeyCount]    as! Int
 ```
+
+> 你可以查看编译器为 Objective-C 接口生成的 Swift 接口，参考：[Tip：如何查看编译器为 Objective-C 接口生成的 Swift 接口？](https://github.com/teney97/Objective-C-Style-Guide/blob/main/内容/混编｜Tip：如何查看编译器为%20Objective-C%20API%20生成的%20Swift%20API.md)
 
 这样的写法虽然是没有错的，但却存在着问题：
 
@@ -55,9 +59,9 @@ Apple 也发现了这个问题。在 Xcode 8 中，Apple 为 Objective-C 提供�
 ```objectivec
 typedef NSString * DCDictionaryKey NS_STRING_ENUM;
 
-DCDictionaryKey const DCDictionaryKeyTitle    = @"title"; 
-DCDictionaryKey const DCDictionaryKeySubtitle = @"subtitle"; 
-DCDictionaryKey const DCDictionaryKeyCount    = @"count";
+FOUNDATION_EXTERN DCDictionaryKey const DCDictionaryKeyTitle;
+FOUNDATION_EXTERN DCDictionaryKey const DCDictionaryKeySubtitle;
+FOUNDATION_EXTERN DCDictionaryKey const DCDictionaryKeyCount;
 
 // 使用
 NSDictionary<DCDictionaryKey, id> *dict = @{......};
@@ -70,6 +74,17 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 在 OC 中使用起来没多大变化，但在 Swift 中可就不一样了，真够 Swift！
 
 ```swift
+// Objective-C 的常数被自动转换成 Swift struct
+public struct DCDictionaryKey : Hashable, Equatable, RawRepresentable {
+    public init(rawValue: String)
+}
+extension DCDictionaryKey {
+    public static let title		 : DCDictionaryKey
+    public static let subtitle : DCDictionaryKey
+    public static let count		 : DCDictionaryKey
+}
+
+// 使用
 let dict:[DCDictionaryKey : Any] = [.title     : "a title",
                                     .subtitle  : "a subTitle",
                                     .count     : 66]
@@ -79,7 +94,7 @@ let subtitle = dict[.subtitle] as! String
 let count    = dict[.count]    as! Int
 
 // 这时候如果我们之间使用字符串 "title" 当作 key 的话，编译器会报错
-let title    = dict["title"]   as! String // Error: Cannot convert value of type 'String' to expected argument type 'DCDictionaryKey'. Replace '"title"' with 'DCDictionaryKey(rawValue: "title") ?? default value'
+let title    = dict["title"]   as! String // Error: Cannot convert value of type 'String' to expected argument type 'DCDictionaryKey'. Replace '"title"' with 'DCDictionaryKey(rawValue: "title") ?? <#default value#>
 ```
 
 Foundation 库的 NSNotificationName、NSRunLoopMode 等，或者 SDWebImage 的 SDWebImageContextOption 就是这样处理的。
@@ -115,11 +130,11 @@ typedef NS_ENUM(NSInteger, UITableViewCellStyle) {
 };
 
 // In Swift, the UITableViewCellStyle enumeration is imported like this:
-enum UITableViewCellStyle: Int {
-    case `default`
-    case value1
-    case value2
-    case subtitle
+public enum UITableViewCellStyle : Int {
+    case `default` = 0
+    case value1 = 1
+    case value2 = 2
+    case subtitle = 3
 }
 
 // Use in Swift
@@ -141,7 +156,7 @@ typedef NS_CLOSED_ENUM(NSInteger, NSComparisonResult) {
 };
 
 // In Swift, the NSComparisonResult enumeration is imported like this:
-@frozen public enum ComparisonResult : Int {
+@frozen public enum NSComparisonResult : Int {
     case orderedAscending = -1
     case orderedSame = 0
     case orderedDescending = 1
@@ -205,26 +220,24 @@ let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 
 用于声明类型常量枚举，不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
 
-可以使用一个指定的类型（如下 TrafficLightColor）对类型常量进行分组。它不能在 Swift 中使用 extension 扩展新的常量集，如果需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
+可以使用一个指定的类型（如下 TrafficLightColor）对类型常量进行分组。使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
 
 ```objectivec
 // Store the three traffic light color options as 0, 1, and 2.
 typedef long TrafficLightColor NS_TYPED_ENUM;
  
-TrafficLightColor const TrafficLightColorRed;
-TrafficLightColor const TrafficLightColorYellow;
-TrafficLightColor const TrafficLightColorGreen;
+FOUNDATION_EXTERN TrafficLightColor const TrafficLightColorRed;
+FOUNDATION_EXTERN TrafficLightColor const TrafficLightColorYellow;
+FOUNDATION_EXTERN TrafficLightColor const TrafficLightColorGreen;
 
 // In Swift, the TrafficLightColor type is imported like this:
-struct TrafficLightColor: RawRepresentable, Equatable, Hashable {
-    typealias RawValue = Int
-    
-    init(rawValue: RawValue)
-    var rawValue: RawValue { get }
-    
-    static var red: TrafficLightColor { get }
-    static var yellow: TrafficLightColor { get }
-    static var green: TrafficLightColor { get }
+public struct TrafficLightColor : Hashable, Equatable, RawRepresentable {
+    public init(rawValue: Int)
+}
+extension TrafficLightColor {
+    public static let red: TrafficLightColor
+    public static let yellow: TrafficLightColor
+    public static let green: TrafficLightColor
 }
 
 // Use in Swift
@@ -238,17 +251,15 @@ let color = TrafficLightColor.red
 ```swift
 // declared
 typedef long FavoriteColor NS_TYPED_EXTENSIBLE_ENUM;
-FavoriteColor const FavoriteColorBlue;
+FOUNDATION_EXTERN FavoriteColor const FavoriteColorBlue;
 
 // imported
-struct FavoriteColor: RawRepresentable, Equatable, Hashable {
-    typealias RawValue = Int
-    
-    init(_ rawValue: RawValue)
-    init(rawValue: RawValue)
-    var rawValue: RawValue { get }
-    
-    static var blue: FavoriteColor { get }
+public struct FavoriteColor : Hashable, Equatable, RawRepresentable {
+    public init(_ rawValue: Int)
+    public init(rawValue: Int)
+}
+extension FavoriteColor {
+    public static let blue: FavoriteColor
 }
 
 // extended
