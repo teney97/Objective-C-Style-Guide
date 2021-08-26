@@ -240,4 +240,6 @@ extension MyClass {
 
 * [Apple｜Improving Objective-C API Declarations for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/improving_objective-c_api_declarations_for_swift)
 * [Jacob Bandes-Storch｜Help Yourself to Some Swift](https://bandes-stor.ch/blog/2015/11/28/help-yourself-to-some-swift/)
+* [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
+* [小专栏｜WWDC20 10680 - 让 Objective-C 框架与 Swift 友好共存的秘籍](https://xiaozhuanlan.com/topic/1980624753)
 
