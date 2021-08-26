@@ -220,7 +220,9 @@ let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 
 用于声明类型常量枚举，不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
 
-可以使用一个指定的类型（如下 TrafficLightColor）对类型常量进行分组。使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
+可以使用一个指定的类型（如下 TrafficLightColor）对类型常量进行分组。
+
+>使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
 
 ```objectivec
 // Store the three traffic light color options as 0, 1, and 2.
