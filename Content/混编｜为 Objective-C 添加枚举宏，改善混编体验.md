@@ -21,7 +21,7 @@ FOUNDATION_EXTERN NSString * const DCDictionaryKeyTitle;
 FOUNDATION_EXTERN NSString * const DCDictionaryKeySubtitle;
 FOUNDATION_EXTERN NSString * const DCDictionaryKeyCount;
 
-// 在使用上则是这样：
+// 使用
 NSDictionary<NSString *, id> *dict = @{......};
 
 NSString *title    = dict[DCDictionaryKeyTitle]; 
