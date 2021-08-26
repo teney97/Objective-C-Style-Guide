@@ -33,14 +33,14 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 
 ```swift
 // Objective-C 的常数被自动转换成 Swift 常量
-public let DCDictionaryKeyTitle		 : String
+public let DCDictionaryKeyTitle    : String
 public let DCDictionaryKeySubtitle : String
-public let DCDictionaryKeyCount		 : String
+public let DCDictionaryKeyCount    : String
 
 // 使用
-let dict:[String : Any] = [DCDictionaryKeyTitle		 : "a title",
+let dict:[String : Any] = [DCDictionaryKeyTitle    : "a title",
                            DCDictionaryKeySubtitle : "a subTitle",
-                           DCDictionaryKeyCount		 : 66]
+                           DCDictionaryKeyCount    : 66]
 
 let title    = dict[DCDictionaryKeyTitle]    as! String 
 let subtitle = dict[DCDictionaryKeySubtitle] as! String 
@@ -79,15 +79,15 @@ public struct DCDictionaryKey : Hashable, Equatable, RawRepresentable {
     public init(rawValue: String)
 }
 extension DCDictionaryKey {
-    public static let title		 : DCDictionaryKey
+    public static let title    : DCDictionaryKey
     public static let subtitle : DCDictionaryKey
-    public static let count		 : DCDictionaryKey
+    public static let count    : DCDictionaryKey
 }
 
 // 使用
-let dict:[DCDictionaryKey : Any] = [.title     : "a title",
-                                    .subtitle  : "a subTitle",
-                                    .count     : 66]
+let dict:[DCDictionaryKey : Any] = [.title    : "a title",
+                                    .subtitle : "a subTitle",
+                                    .count    : 66]
 
 let title    = dict[.title]    as! String
 let subtitle = dict[.subtitle] as! String
