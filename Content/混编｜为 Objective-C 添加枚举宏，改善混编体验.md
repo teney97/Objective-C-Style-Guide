@@ -224,7 +224,7 @@ let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 
 >使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
 
-```objectivec
+```swift
 // Store the three traffic light color options as 0, 1, and 2.
 typedef long TrafficLightColor NS_TYPED_ENUM;
  
