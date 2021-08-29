@@ -1,5 +1,7 @@
 ## 混编｜为 Objective-C 添加枚举宏，改善混编体验
 
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1630251046547-33309540-d0d9-4c15-95e3-ebf3deaeef33.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+
 ### 前言
 
 使用 Objective-C 的你，是否对 `NS_CLOSED_ENUM`、`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`  这几个枚举宏感到陌生呢？笔者对修饰 NSNotificationName 的 `NS_EXTENSIBLE_STRING_ENUM` 宏比较好奇，便展开了探索，于是就有了本文。
