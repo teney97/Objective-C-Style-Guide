@@ -1,15 +1,10 @@
 ## 混编｜为 Objective-C 添加枚举宏，改善混编体验
 
-### 写在前面
+### 前言
 
 使用 Objective-C 的你，是否对 `NS_CLOSED_ENUM`、`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`  这几个枚举宏感到陌生呢？笔者对修饰 NSNotificationName 的 `NS_EXTENSIBLE_STRING_ENUM` 宏比较好奇，便展开了探索，于是就有了本文。
 
-```objectivec
-typedef NSString *NSNotificationName NS_EXTENSIBLE_STRING_ENUM;
-UIKIT_EXTERN NSNotificationName const UIApplicationDidEnterBackgroundNotification;
-UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotification;
-UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
-```
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1630251046547-33309540-d0d9-4c15-95e3-ebf3deaeef33.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
 ### 优雅地声明类型常量枚举
 
@@ -52,12 +47,14 @@ let count    = dict[DCDictionaryKeyCount]    as! Int
 这样的写法虽然是没有错的，但却存在着问题：
 
 1. dict 的 key 的类型是 String，所以我们其实可以使用任意的字符串当作索引。一般情况下，开发者使用这个 dict 时会去查文件看看有哪些 key 可以使用。但不可避免的是，开发者也能会直接使用字符串如 dict["title"] 来取值，如果不小心拼错的话编译器也不会给警告的，这样就增加了不可预期的错误的风险。
-2. 一个小问题，就是代码看起来比较冗长，不够 Swift。我们希望的是能直接使用 `.title` 而不是 `DCDictionaryKeyTitle`，以彰显 Swift 的简洁。
+2. 一个小问题，就是代码看起来比较冗长，不符合 Swift 的使用习惯。在 Swift 中我们通常会把这种常量枚举用一个具有字符串原始值的 Enum 或者 Struct 定义，这样我们就能直接使用 `.title` 而不是 `DCDictionaryKeyTitle`，以彰显 Swift 的简洁。
 
-Apple 也发现了这个问题。在 Xcode 8 中，Apple 为 Objective-C 提供了全新的宏 NS_STRING_ENUM 和 NS_EXTENSIBLE_STRING_ENUM，让字符串类型常量在 Swift 中使用起来更优雅简洁更 Swift。
+Apple 也发现了这个问题。在 Xcode 8 中，Apple 为 Objective-C 提供了全新的宏 NS_STRING_ENUM 和 NS_EXTENSIBLE_STRING_ENUM，让字符串类型常量在 Swift 中使用起来更优雅简洁更符合 Swift 的使用习惯。
+
+首先，使用 typedef 对类型常量进行分组，并指定一个类型（如 DCDictionaryKey），涉及到使用该类型常量的地方都改为使用 DCDictionaryKey，而不是 String。然后，在后面添加上宏 NS_STRING_ENUM。
 
 ```objectivec
-typedef NSString * DCDictionaryKey NS_STRING_ENUM;
+typedef NSString *DCDictionaryKey NS_STRING_ENUM;
 
 FOUNDATION_EXTERN DCDictionaryKey const DCDictionaryKeyTitle;
 FOUNDATION_EXTERN DCDictionaryKey const DCDictionaryKeySubtitle;
@@ -74,7 +71,7 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 在 OC 中使用起来没多大变化，但在 Swift 中可就不一样了，真够 Swift！
 
 ```swift
-// Objective-C 的常数被自动转换成 Swift struct
+// Objective-C 的常数被自动转换成 Swift Struct
 public struct DCDictionaryKey : Hashable, Equatable, RawRepresentable {
     public init(rawValue: String)
 }
@@ -220,7 +217,7 @@ let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 
 用于声明类型常量枚举，不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
 
-可以使用一个指定的类型（如下 TrafficLightColor）对类型常量进行分组。
+可以使用 typedef 对类型常量进行分组，并指定一个类型（如下 TrafficLightColor），然后在后面添加上宏 NS_TYPED_ENUM。
 
 >使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
 
@@ -274,13 +271,14 @@ extension FavoriteColor {
 
 ### 小结
 
-通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更 Swift。 
+通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更符合 Swift 的使用习惯。 
 
 ### 参考
 
 * [Apple｜Grouping Related Objective-C Constants](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/grouping_related_objective-c_constants)
 * [Apple｜macOS Mojave 10.14 Release Notes - Foundation Release Notes](https://developer.apple.com/documentation/macos-release-notes/foundation-release-notes#3035774)
 * [Apple｜SE-0192 Handling Future Enum Cases](https://github.com/apple/swift-evolution/blob/master/proposals/0192-non-exhaustive-enums.md)
+* [Apple｜WWDC20 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
 * [SwiftGG｜对未来枚举的 case 进行 switch](https://swiftgg.gitbook.io/swift/yu-yan-can-kao/05_statements#branch-statements)
 * [SwiftGG｜frozen](https://swiftgg.gitbook.io/swift/yu-yan-can-kao/07_attributes#frozen)
 * [Swift 5 Frozen enums](https://useyourloaf.com/blog/swift-5-frozen-enums/)
