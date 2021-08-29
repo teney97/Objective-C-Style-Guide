@@ -4,7 +4,12 @@
 
 使用 Objective-C 的你，是否对 `NS_CLOSED_ENUM`、`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`  这几个枚举宏感到陌生呢？笔者对修饰 NSNotificationName 的 `NS_EXTENSIBLE_STRING_ENUM` 宏比较好奇，便展开了探索，于是就有了本文。
 
-![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1630251046547-33309540-d0d9-4c15-95e3-ebf3deaeef33.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+```objectivec
+typedef NSString *NSNotificationName NS_EXTENSIBLE_STRING_ENUM;
+UIKIT_EXTERN NSNotificationName const UIApplicationDidEnterBackgroundNotification;
+UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotification;
+UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
+```
 
 ### 优雅地声明类型常量枚举
 
@@ -49,9 +54,9 @@ let count    = dict[DCDictionaryKeyCount]    as! Int
 1. dict 的 key 的类型是 String，所以我们其实可以使用任意的字符串当作索引。一般情况下，开发者使用这个 dict 时会去查文件看看有哪些 key 可以使用。但不可避免的是，开发者也能会直接使用字符串如 dict["title"] 来取值，如果不小心拼错的话编译器也不会给警告的，这样就增加了不可预期的错误的风险。
 2. 一个小问题，就是代码看起来比较冗长，不符合 Swift 的使用习惯。在 Swift 中我们通常会把这种常量枚举用一个具有字符串原始值的 Enum 或者 Struct 定义，这样我们就能直接使用 `.title` 而不是 `DCDictionaryKeyTitle`，以彰显 Swift 的简洁。
 
-Apple 也发现了这个问题。在 Xcode 8 中，Apple 为 Objective-C 提供了全新的宏 NS_STRING_ENUM 和 NS_EXTENSIBLE_STRING_ENUM，让字符串类型常量在 Swift 中使用起来更优雅简洁更符合 Swift 的使用习惯。
+Apple 也发现了这个问题。在 Xcode 8 中，Apple 为 Objective-C 提供了全新的宏 `NS_STRING_ENUM` 和 `NS_EXTENSIBLE_STRING_ENUM`，让字符串类型常量在 Swift 中使用起来更优雅简洁更符合 Swift 的使用习惯。
 
-首先，使用 typedef 对类型常量进行分组，并指定一个类型（如 DCDictionaryKey），涉及到使用该类型常量的地方都改为使用 DCDictionaryKey，而不是 String。然后，在后面添加上宏 NS_STRING_ENUM。
+首先，使用 typedef 对类型常量进行分组，并指定一个类型（如 DCDictionaryKey），涉及到使用该类型常量的地方都改为使用 DCDictionaryKey，而不是 String。然后，在后面添加上宏 `NS_STRING_ENUM`。
 
 ```objectivec
 typedef NSString *DCDictionaryKey NS_STRING_ENUM;
