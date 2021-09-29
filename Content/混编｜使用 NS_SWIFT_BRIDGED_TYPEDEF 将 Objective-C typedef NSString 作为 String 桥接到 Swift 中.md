@@ -8,7 +8,7 @@
 
 ```swift
 // Objective-C Interface
-typedef NSString *TimerID;
+typedef NSString * TimerID;
 
 @interface Timer : NSObject
 + (void)cancelTimer:(TimerID)timerID NS_SWIFT_NAME(cancel(timerID:));
@@ -43,7 +43,7 @@ Timer.cancel(timerID: timerID as String)
 
 ```swift
 // Objective-C Interface
-typedef NSString *TimerID NS_SWIFT_BRIDGED_TYPEDEF;
+typedef NSString * TimerID NS_SWIFT_BRIDGED_TYPEDEF;
 
 @interface Timer : NSObject
 + (void)cancelTimer:(TimerID)timerID NS_SWIFT_NAME(cancel(timerID:));
@@ -73,7 +73,7 @@ Timer.cancel(timerID: timerID)
 
 ```swift
 // Objective-C Interface
-typedef NSString *TimerID NS_TYPED_ENUM;
+typedef NSString * TimerID NS_TYPED_ENUM;
 
 @interface Timer : NSObject
 + (void)cancelTimer:(TimerID)timerID NS_SWIFT_NAME(cancel(timerID:));
@@ -110,9 +110,9 @@ let nib = NSNib(nibNamed: "Inspector", bundle: nil)
 
 ### One More Thing
 
-在写这篇博客的时候，我在 Stack Overflow 上看到了一个很有意思的问题：为什么 `typedef NSString *MyString` 优于 `typedef NSString MyString`？链接在这 [Stack Overflow｜In objective-c, why 'typedef NSString * MyString' is preferred over 'typedef NSString MyString'?](https://stackoverflow.com/questions/45063451/in-objective-c-why-typedef-nsstring-mystring-is-preferred-over-typedef-nss)。
+在写这篇博客的时候，我在 Stack Overflow 上看到了一个很有意思的问题：为什么 `typedef NSString * MyString` 优于 `typedef NSString MyString`？链接在这 [Stack Overflow｜In objective-c, why 'typedef NSString * MyString' is preferred over 'typedef NSString MyString'?](https://stackoverflow.com/questions/45063451/in-objective-c-why-typedef-nsstring-mystring-is-preferred-over-typedef-nss)。
 
-楼主认为 `typedef NSString *MyString` 隐藏了 MyString 是一个指针的事实，而且也没有以 `Ref` 后缀命名以指示其是一个指针，所以他更喜欢 `typedef NSString MyString`。然而 `typedef NSString MyString` 不能很好地与 Swift 配合使用。
+楼主认为 `typedef NSString * MyString` 隐藏了 MyString 是一个指针的事实，而且也没有以 `Ref` 后缀命名以指示其是一个指针，所以他更喜欢 `typedef NSString MyString`。然而 `typedef NSString MyString` 不能很好地与 Swift 配合使用。
 
 于是笔者我尝试看看 `typedef NSString MyString` 在 Generated Swift Interface 中是什么样的。
 
@@ -123,10 +123,10 @@ typedef NSString MyString;
 // nothing
 ```
 
-居然没有生成。不过确实好像很少看到 `typedef NSString MyString` 这样的写法，Apple 自己的代码也都是 `typedef NSString *MyString` 写法，例如：
+居然没有生成。不过确实好像很少看到 `typedef NSString MyString` 这样的写法，Apple 自己的代码写法也都是 `typedef NSString * MyString`，例如：
 
 ```objectivec
-typedef NSString *NSErrorDomain;
+typedef NSString * NSErrorDomain;
 typedef NSString * NSExceptionName NS_TYPED_EXTENSIBLE_ENUM;
 typedef NSString * NSRunLoopMode NS_TYPED_EXTENSIBLE_ENUM;
 ```
