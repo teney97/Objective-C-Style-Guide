@@ -7,10 +7,10 @@
 混编：
 * [Tip：如何查看编译器为 Objective-C 接口生成的 Swift 接口？](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9CTip%EF%BC%9A%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%BA%20Objective-C%20API%20%E7%94%9F%E6%88%90%E7%9A%84%20Swift%20API.md)
 * [1.为 Objective-C 添加枚举宏，改善混编体验](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%B8%BA%20Objective-C%20%E6%B7%BB%E5%8A%A0%E6%9E%9A%E4%B8%BE%E5%AE%8F%EF%BC%8C%E6%94%B9%E5%96%84%E6%B7%B7%E7%BC%96%E4%BD%93%E9%AA%8C.md)
+* [2.将 Objective-C typedef NSString 作为 String 桥接到 Swift 中（NS_SWIFT_BRIDGED_TYPEDEF）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%BD%BF%E7%94%A8%20NS_SWIFT_BRIDGED_TYPEDEF%20%E5%B0%86%20Objective-C%20typedef%20NSString%20%E4%BD%9C%E4%B8%BA%20String%20%E6%A1%A5%E6%8E%A5%E5%88%B0%20Swift%20%E4%B8%AD.md)
 * [2.使 Objective-C API 在 Swift 中不可用（NS_SWIFT_UNAVAILABLE）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜使%20Objective-C%20API%20在%20Swift%20中不可用（NS_SWIFT_UNAVAILABLE）.md)
 * [3.为 Swift 重命名 Objective-C API（NS_SWIFT_NAME）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20重命名%20Objective-C%20API（NS_SWIFT_NAME）.md)
 * [4.为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20改进%20Objective-C%20API%20声明（NS_REFINED_FOR_SWIFT）.md)
-* [5.混编｜使用 NS_SWIFT_BRIDGED_TYPEDEF 将 Objective-C typedef NSString 作为 String 桥接到 Swift 中](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%BD%BF%E7%94%A8%20NS_SWIFT_BRIDGED_TYPEDEF%20%E5%B0%86%20Objective-C%20typedef%20NSString%20%E4%BD%9C%E4%B8%BA%20String%20%E6%A1%A5%E6%8E%A5%E5%88%B0%20Swift%20%E4%B8%AD.md)
 * [6.CToSwiftNameTranslation](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9CCToSwiftNameTranslation.md)
 * 在 Objective-C API 中指定可空性
 
