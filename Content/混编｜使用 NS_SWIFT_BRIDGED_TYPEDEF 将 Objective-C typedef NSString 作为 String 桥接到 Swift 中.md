@@ -1,4 +1,4 @@
-## 混编｜使用 NS_SWIFT_BRIDGED_TYPEDEF 将 Objective-C typedef NSString 作为 String 桥接到 Swift 中
+## 混编｜将 Objective-C typedef NSString 作为 String 桥接到 Swift 中（NS_SWIFT_BRIDGED_TYPEDEF）
 
 ### 前言
 
