@@ -167,7 +167,7 @@ public struct UITableViewCellStyle : Equatable, RawRepresentable {
 let style = UITableViewCellStyleDefault
 ```
 
-在 [《Effective Objective-C 2.0》5. 用枚举表示状态、选项、状态码](https://juejin.cn/post/6904440708006936590#heading-6) 中也提到了使用 NS_ENUM 和 NS_OPTIONS 来定义枚举类型的优点。如果你的工程也处于混编阶段，不妨将 Objective-C 中的枚举类型改为 NS_ENUM 和 NS_OPTIONS 定义，以优化 Swift 编程体验吧。
+在 [《Effective Objective-C 2.0》5. 用枚举表示状态、选项、状态码](https://juejin.cn/post/6904440708006936590#heading-6) 中也提到了使用 NS_ENUM 和 NS_OPTIONS 来定义枚举类型的优点。如果你的工程处于混编阶段，不妨将 Objective-C 中的枚举类型改为 NS_ENUM 和 NS_OPTIONS 定义，以优化 Swift 编程体验吧。
 
 #### NS_CLOSED_ENUM
 
