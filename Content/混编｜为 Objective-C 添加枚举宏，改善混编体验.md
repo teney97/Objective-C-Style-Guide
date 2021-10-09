@@ -317,7 +317,7 @@ extension FavoriteColor {
 
 ### 小结
 
-通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更符合 Swift 的使用习惯。 
+通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。使用 `NS_ENUM` 和 `NS_OPTIONS` 来声明简单枚举和选项枚举，以优化 Swift 编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更符合 Swift 的使用习惯。 
 
 ### 参考
 
