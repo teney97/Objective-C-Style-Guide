@@ -15,7 +15,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 
 ### 优雅地声明类型常量枚举
 
-在 C 和 Objective-C 中，枚举不像 Swift 中的那么强大，只能给枚举成员赋予一个整型值。这给我们带来了诸多不便，例如，我们有时候需要给枚举成员关联字符串，不得不额外提供函数或者其它方式，来做枚举与字符串之间的映射转换。对此，我们可以使用一组类型常量集来声明枚举。又或者，在 Objective-C 中，我们经常会使用 NSString 类型常量来当作 NSDictionary 的 key、NSUserDefaults 的 key、notificationName 等等。例如：
+在 Objective-C 中，我们经常会使用 NSString 类型常量来当作 NSDictionary 的 key、NSUserDefaults 的 key、notificationName 等等。例如：
 
 ```objectivec
 // Dicitonary keys
@@ -145,6 +145,30 @@ public enum UITableViewCellStyle : Int {
 let style = UITableViewCellStyle.default
 ```
 
+这个知识点看似没用，实则大大有用。在 Objective-C 中，除了使用 NS_ENUM 宏，还可以像如下等方式定义枚举。它或许是你或同事的编码习惯，又或许是历史遗留的代码。虽然这样的写法并没有错，但 Generated Swift Interface 却不尽人意，导致在 Swift 中使用时只能使用原始的完整的枚举名称。
+
+```objectivec
+// Declare in Objective-C
+typedef enum: NSUInteger {
+    UITableViewCellStyleDefault,
+    UITableViewCellStyleValue1,
+    UITableViewCellStyleValue2,
+    UITableViewCellStyleSubtitle
+} UITableViewCellStyle;
+
+// Generated Swift Interface
+public struct UITableViewCellStyle : Equatable, RawRepresentable {
+    public init(_ rawValue: UInt)
+    public init(rawValue: UInt)
+    public var rawValue: UInt
+}
+
+// Use in Swift
+let style = UITableViewCellStyleDefault
+```
+
+在 [《Effective Objective-C 2.0》5. 用枚举表示状态、选项、状态码](https://juejin.cn/post/6904440708006936590#heading-6) 中也提到了使用 NS_ENUM 和 NS_OPTIONS 来定义枚举类型的优点。如果你的工程也处于混编阶段，不妨将 Objective-C 中的枚举类型改为 NS_ENUM 和 NS_OPTIONS 定义，以优化 Swift 编程体验吧。
+
 #### NS_CLOSED_ENUM
 
 用于声明不会变更枚举成员的简单的枚举（简称 “冻结枚举” ），对应 Swift 中的 `@frozen` 关键字。冻结枚举对于希望在 switch 语句中匹配有限状态集的时候非常有用，这个有限状态集是一个完整的集合，覆盖了所有情况，将来不会再有其他新的情况。
@@ -190,7 +214,7 @@ typedef NS_CLOSED_ENUM(NSInteger, NSComparisonResult) {
 
 #### NS_OPTIONS
 
-用于声明可选类型枚举，这个大家也都很熟悉了。
+用于声明可选类型枚举，这个大家也都很熟悉了。需要注意的地方在上文 **NS_ENUM** 中已经提到了，尽量使用 NS_OPTIONS 来定义选项枚举。
 
 ```objectivec
 // Declare in Objective-C
