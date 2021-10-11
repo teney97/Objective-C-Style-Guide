@@ -24,7 +24,7 @@ NS_SWIFT_NAME 可用于：
 @interface Sandwich : NSObject
 @end
   
-// Generated Swift 5 Interface
+// Generated Swift Interface
 open class SandwichPreferences : NSObject {
     open var includesCrust: Bool
 }
@@ -39,8 +39,8 @@ preferences.includesCrust = true
 
 使用 NS_SWIFT_NAME 重命名 Objective-C 类和属性：
 
-* 
-* 
+* 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences
+* 给 includesCrust 取个简短的名字
 
 ```objectivec
 // Objective-C Interface
@@ -52,7 +52,7 @@ NS_SWIFT_NAME(Sandwich.Preferences) // 宏用作前缀
 @interface Sandwich : NSObject
 @end
  
-// Generated Swift 5 Interface
+// Generated Swift Interface
 extension Sandwich {
     open class Preferences : NSObject {
         open var isCrusty: Bool
@@ -79,7 +79,7 @@ typedef NS_ENUM(NSInteger, SandwichBreadType) {
     brioche, pumpernickel, pretzel, focaccia
 };
 
-// In Swift, the SandwichBreadType enumeration is imported like this:
+// Generated Swift Interface
 public enum SandwichBreadType : Int {
     case brioche = 0
     case pumpernickel = 1
@@ -91,6 +91,8 @@ public enum SandwichBreadType : Int {
 let type = SandwichBreadType.focaccia
 ```
 
+将 SandwichBreadType 变成 Sandwich.Preferences 的内部枚举。因为前面已经通过使用 NS_SWIFT_NAME 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences，所以这里直接写 `NS_SWIFT_NAME(SandwichPreferences.BreadType)` 即可。
+
 优化后：
 
 ```objectivec
@@ -99,7 +101,7 @@ typedef NS_ENUM(NSInteger, SandwichBreadType) {
     brioche, pumpernickel, pretzel, focaccia
 } NS_SWIFT_NAME(SandwichPreferences.BreadType);
 
-// In Swift, the SandwichBreadType enumeration is imported like this:
+// Generated Swift Interface
 extension Sandwich.Preferences {
     public enum BreadType : Int { 
         case brioche = 0
@@ -123,7 +125,7 @@ let type = Sandwich.Preferences.BreadType.focaccia
 // Declare in Objective-C
 - (NSSet<NSString *> *)previousMissionsFlownByAstronaut:(SKAstronaut *)astronaut;
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 ```
 
@@ -137,7 +139,7 @@ open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 // Declare in Objective-C
 - (NSSet<NSString *> *)previousMissionsFlownByAstronaut:(SKAstronaut *)astronaut NS_SWIFT_NAME(previousMissions(flownBy:));
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 open func previousMissions(flownBy astronaut: SKAstronaut) -> Set<String>
 ```
 
@@ -153,7 +155,7 @@ typedef NS_ENUM(NSInteger, SKFuelKind) {
 
 NSString *SKFuelKindToString(SKFuelKind);
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 public enum SKFuelKind : Int {
     case H2 = 0
     case CH4 = 1
@@ -178,7 +180,7 @@ typedef NS_ENUM(NSInteger, SKFuelKind) {
 
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(string(from:));
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 extension SKFuel {
     public enum Kind : Int {
         case H2 = 0
@@ -202,7 +204,7 @@ typedef NS_ENUM(NSInteger, SKFuelKind) {
 
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(SKFuelKind.string(from:));
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 extension SKFuel {
     public enum Kind : Int {
         case H2 = 0
@@ -228,7 +230,7 @@ typedef NS_ENUM(NSInteger, SKFuelKind) {
 
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(SKFuelKind.string(self:));
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 extension SKFuel {
     public enum Kind : Int {      
         case H2 = 0
@@ -254,7 +256,7 @@ typedef NS_ENUM(NSInteger, SKFuelKind) {
 
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(getter:SKFuelKind.description(self:));
 
-// Generated Swift 5 Interface
+// Generated Swift Interface
 extension SKFuel {
     public enum Kind : Int {      
         case H2 = 0
