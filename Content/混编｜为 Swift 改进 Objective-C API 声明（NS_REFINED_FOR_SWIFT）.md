@@ -1,5 +1,3 @@
-
-
 ## 混编｜为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）
 
 使用宏 NS_REFINED_FOR_SWIFT 来改进 Objective-C API 声明。该宏在混编时主要参与适配器的工作，用途有：
