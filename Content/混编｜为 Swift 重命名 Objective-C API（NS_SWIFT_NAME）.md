@@ -1,6 +1,10 @@
 ## 混编｜为 Swift 重命名 Objective-C API（NS_SWIFT_NAME）
 
-使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API。这样在混编时在 Swift 中调用到 Objective-C API 的地方就会使用指定的名称，而不是原来的名称，而且这不会影响到 Objective-C 代码，在 Objective-C 中还是使用原来的名称，这样就支持一个 API 在两种语言下都有适当的名称。
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634022274579-75656438-4c8b-431a-b1d5-d4593c347aef.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+
+### 概述
+
+使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API，就可以在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称，这样就支持一个 API 在两种语言下都有适当的名称。
 
 该宏在混编时非常有用，因为 Objective-C 的 API 和 Swift 的风格相差比较大，Swift 中的函数命名比较简约，而 OC 通过将方法作用表达得更清晰明了导致方法名较长。这时候就可以使用 NS_SWIFT_NAME 宏来为 Swift 重命名 Objective-C API，优化 Swift 调用体验。
 
@@ -69,8 +73,6 @@ preferences.isCrusty = true
 
 #### 重命名 Objective-C 枚举
 
-还可以使用 NS_SWIFT_NAME 重命名 Objective-C 枚举。
-
 优化前：
 
 ```objectivec
@@ -119,7 +121,7 @@ let type = Sandwich.Preferences.BreadType.focaccia
 
 #### 重命名 Objective-C 方法
 
-为了解决 API 风格上的问题，Swift 会根据一些规则重命名 Objective-C API，例如：
+为了解决 API 风格上的问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)重命名 Objective-C API，例如：
 
 ```objectivec
 // Declare in Objective-C
@@ -168,7 +170,7 @@ public func SKFuelKindToString(_: SKFuelKind) -> String
 优化点：
 
 1. 针对目前框架，我们有一个 SKFule 类，此时我们可以让这个枚举和 SKFule 联合使⽤，所以我们将其改为 SKFuel.Kind
-2. 重命名 SKFuelKindToString 全局函数， 去掉额外的信息，添加⼀个参数标签
+2. 重命名 SKFuelKindToString 全局函数为 string， 去掉额外的信息，添加⼀个参数标签 from
 
 ```objectivec
 // Declare in Objective-C
@@ -196,23 +198,9 @@ NS_SWIFT_NAME 处理全局函数的能力还不止这么点。⾸先你可以将
 
 ```objectivec
 // Declare in Objective-C
-typedef NS_ENUM(NSInteger, SKFuelKind) {
-    SKFuelKindH2 = 0,
-    SKFuelKindCH4 = 1,
-    SKFuelKindC12H26 = 2
-} NS_SWIFT_NAME(SKFuel.Kind);
-
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(SKFuelKind.string(from:));
 
 // Generated Swift Interface
-extension SKFuel {
-    public enum Kind : Int {
-        case H2 = 0
-        case CH4 = 1
-        case C12H26 = 2
-    }
-}
-
 extension SKFuel.Kind {
     public static func string(from _: SKFuel.Kind) -> String
 }
@@ -222,49 +210,21 @@ extension SKFuel.Kind {
 
 ```objectivec
 // Declare in Objective-C
-typedef NS_ENUM(NSInteger, SKFuelKind) {
-    SKFuelKindH2 = 0,
-    SKFuelKindCH4 = 1,
-    SKFuelKindC12H26 = 2
-} NS_SWIFT_NAME(SKFuel.Kind);
-
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(SKFuelKind.string(self:));
 
 // Generated Swift Interface
-extension SKFuel {
-    public enum Kind : Int {      
-        case H2 = 0
-        case CH4 = 1
-        case C12H26 = 2
-    }
-}
-
 extension SKFuel.Kind {
     public func string() -> String
 }
 ```
 
-最后，你也可以将某个⽅法变为⼀个属性，只需要在前⾯增加⼀个 getter，同理 setter。
+最后，你也可以将某个⽅法变为⼀个属性，只需要在前⾯添加 `getter:`，setter 同理。
 
 ```objectivec
 // Declare in Objective-C
-typedef NS_ENUM(NSInteger, SKFuelKind) {
-    SKFuelKindH2 = 0,
-    SKFuelKindCH4 = 1,
-    SKFuelKindC12H26 = 2
-} NS_SWIFT_NAME(SKFuel.Kind);
-
 NSString *SKFuelKindToString(SKFuelKind) NS_SWIFT_NAME(getter:SKFuelKind.description(self:));
 
 // Generated Swift Interface
-extension SKFuel {
-    public enum Kind : Int {      
-        case H2 = 0
-        case CH4 = 1
-        case C12H26 = 2
-    }
-}
-
 extension SKFuel.Kind {
     public var description: String { get }
 }
@@ -280,16 +240,43 @@ extension SKFuel.Kind {
 
 ![](https://images.xiaozhuanlan.com/photo/2020/5f7e4e328f96a4713c2862454e588e88.png)
 
+### Extension：为 Objective-C 重命名 Swift API
 
+可以在 projectName-Swift.h 文件中查看编译器为 Swift 接口生成的 Objective-C 接口，编译器也会根据一些规则为 Objective-C 重命名 Swift API，通常这个结果也还不错，但有时候还是存在优化空间的，这时候我们也可以重命名 Swift API。
 
-### Extension 使用 @objc 为 Objective-C 重命名 Swift API
+我们再拿上文 “获取某个宇航员以前所执行的任务列表的方法” 的例子，假如这个方法定义在 Swift 类中。
 
+```swift
+@objc func previousMissions(flownBy astronaut: SKAstronaut) -> Set<String> { ... }
+```
 
+生成的 Objective-C API：
+
+```objectivec
+// projectName-Swift.h
+- (NSSet<NSString *> * _Nonnull)previousMissionsWithFlownBy:(SKAstronaut * _Nonnull)astronaut SWIFT_WARN_UNUSED_RESULT;
+```
+
+方法名不够清晰，这不符合 Objective-C API 命名规范，我们期望的转换结果如下：
+
+```objectivec
+- (NSSet<NSString *> * _Nonnull)previousMissionsFlownByAstronaut:(SKAstronaut * _Nonnull)astronaut;
+```
+
+这时候我们可以为 Objective-C 重命名该 Swift API：
+
+```swift
+@objc(previousMissionsFlownByAstronaut:) func previousMissions(flownBy astronaut: SKAstronaut) -> Set<String> { ... }
+```
+
+### 小结
 
 
 
 ### 参考
 
 * [Apple｜Renaming Objective-C APIs for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/renaming_objective-c_apis_for_swift)
+* [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
+* [Apple｜CToSwiftNameTranslation](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)
 * [WWDC 内参｜WWDC20 10680 - 让 Objective-C 框架与 Swift 友好共存的秘籍](https://xiaozhuanlan.com/topic/1980624753#sectionobjectivec)
 
