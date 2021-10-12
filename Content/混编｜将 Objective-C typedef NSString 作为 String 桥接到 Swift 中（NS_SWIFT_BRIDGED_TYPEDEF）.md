@@ -1,5 +1,7 @@
 ## 混编｜将 Objective-C typedef NSString 作为 String 桥接到 Swift 中（NS_SWIFT_BRIDGED_TYPEDEF）
 
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634002390942-f364763e-db92-4079-80b1-46683722c37d.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+
 ### 前言
 
 在 Objective-C 与 Swift 混编的过程中，你是否遇到因为 Objective-C typedef 的桥接问题导致在 Swift 中使用时产生类型冲突的问题呢，本篇文章就带你使用 `NS_SWIFT_BRIDGED_TYPEDEF` 宏优雅地解决这一问题。
