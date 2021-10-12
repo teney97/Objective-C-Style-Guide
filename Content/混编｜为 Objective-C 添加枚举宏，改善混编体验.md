@@ -1,6 +1,6 @@
 ## 混编｜为 Objective-C 添加枚举宏，改善混编体验
 
-![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1630251046547-33309540-d0d9-4c15-95e3-ebf3deaeef33.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634001510785-b344fbf4-f5b2-4e6e-a8e1-ffe270fa7ffc.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
 ### 前言
 
@@ -12,6 +12,8 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidEnterBackgroundNotificatio
 UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotification;
 UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
 ```
+
+> 在 Xcode 13 中，Apple 已经将其改为使用 `NS_TYPED_EXTENSIBLE_ENUM` 修饰。
 
 ### 优雅地声明类型常量枚举
 
