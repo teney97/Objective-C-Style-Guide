@@ -6,7 +6,7 @@
 
 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API，就可以在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称，这样就支持一个 API 在两种语言下都有适当的名称。
 
-该宏在混编时非常有用，因为 Objective-C 的 API 和 Swift 的风格相差比较大，Swift 中的函数命名比较简约，而 OC 通过将方法作用表达得更清晰明了导致方法名较长。这时候就可以使用 NS_SWIFT_NAME 宏来为 Swift 重命名 Objective-C API，优化 Swift 调用体验。
+该宏在混编时非常有用，Swift 和 Objective-C 的命名风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们就可以使用 NS_SWIFT_NAME 宏来为 Swift 重命名 Objective-C API，优化 Swift 调用体验。
 
 NS_SWIFT_NAME 可用于：
 
