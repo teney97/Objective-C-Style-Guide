@@ -1,5 +1,7 @@
 ## 混编｜Tip：如何查看编译器为 Objective-C 接口生成的 Swift 接口？
 
+### 查看编译器为 Objective-C 接口生成的 Swift 接口
+
 在混编时，为了让 Swift 调用 Objective-C API 符合 Swift 的使用习惯，我们就要关注编译器为 Objective-C 接口自动生成的 Swift 接口，然后对质量不高的 API 进行优化。
 
 那么，如何查看编译器为 Objective-C 接口生成的 Swift 接口呢？
@@ -13,6 +15,10 @@
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1629993923672-6e2b7ccc-5c1a-4f88-9bf1-3ebce00c1d34.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
 掌握这个技巧很重要，它能帮助我们理解编译器为 Objective-C 接口生成的 Swift 接口是什么样的，以及帮助我们更好地优化 Objective-C API。
+
+### 查看编译器为 Swift 接口生成的 Objective-C 接口
+
+查看 projectName-Swift.h 文件
 
 ### 参考
 
