@@ -59,7 +59,7 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 #### 1. 将宏 NS_REFINED_FOR_SWIFT 添加到 Objective-C API 中
 
-首先，将 `NS_REFINED_FOR_SWIFT` 作为后缀添加到 Objective-C API 中，生成的 Swift API 会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码提示，相当于隐藏了 API。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
+首先，将 `NS_REFINED_FOR_SWIFT` 作为后缀添加到 Objective-C API 中，生成的 Swift API 会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码补全提示，相当于隐藏了 API。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
 
 > 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 `NS_REFINED_FOR_SWIFT` 做 API 适配，那就遵守规范吧，不要这样使用！
 
