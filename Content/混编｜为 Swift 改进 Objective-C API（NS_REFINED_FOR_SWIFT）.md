@@ -1,6 +1,8 @@
-## 混编｜为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）
+## 混编｜为 Swift 改进 Objective-C API（NS_REFINED_FOR_SWIFT）
 
-使用宏 `NS_REFINED_FOR_SWIFT` 来改进 Objective-C API 声明。该宏在混编时主要参与适配器的工作，用途有：
+### 前言
+
+使用宏 `NS_REFINED_FOR_SWIFT` 来改进 Objective-C API 。该宏在混编时主要参与适配器的工作，用途有：
 
 * 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似的底层实现
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
@@ -59,9 +61,9 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 #### 1. 将宏 NS_REFINED_FOR_SWIFT 添加到 Objective-C API 中
 
-首先，将 `NS_REFINED_FOR_SWIFT` 作为后缀添加到 Objective-C API 中，生成的 Swift API 会以双下划线 (`__`) 开头重命名，且在 Swift 中调用时不会有代码补全提示，相当于隐藏了 API。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
+首先，将 `NS_REFINED_FOR_SWIFT` 作为后缀添加到 Objective-C API 中，生成的 Swift API 会以双下划线 `__` 开头重命名，且在 Swift 中调用时不会有代码补全提示，相当于隐藏了 API。这样可以一定程度上防止你意外地直接使用该 Objective-C API，而没有使用适配后的 Swift API。 
 
-> 这里是可以一定程度上防止而不是绝对，因为如果开发者知道该规则的话，仍然可以以 (`__`) 开头拼接 Objective-C API 名称调用。但既然使用了 `NS_REFINED_FOR_SWIFT` 做 API 适配，那就遵守规范吧，不要这样使用！
+> 这里是可以一定程度上防止而不是绝对，因为如果开发者了解该规则的话，仍然可以以 `__` 开头拼接 Objective-C API 名称调用。但既然使用了 `NS_REFINED_FOR_SWIFT` 做 API 适配，就表明该方法不应该原样使用，遵守规范吧！
 
 ```objectivec
 @interface Color : NSObject
@@ -76,7 +78,7 @@ var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
 
 #### 2. 在 Swift 中添加适配器 API
 
-在 Swift 中添加一个新的 API，来对 Objective-C API 进行适配改进。这里就是实现只读计算属性 rgba，在实现中调用以 (`__`) 开头重命名的 Objective-C API。
+在 Swift 中添加一个新的 API，来对 Objective-C API 进行适配改进。这里就是实现只读计算属性 rgba，在实现中调用以 `__` 开头重命名的 Objective-C API。
 
 ```swift
 extension Color {
@@ -105,7 +107,7 @@ var a = color.rgba.alpha
 
 接下来让我们看看 SDWebImage 是怎么使用 NS_REFINED_FOR_SWIFT 的。
 
-UIImageView (WebCache) 分类中扩展的方法非常多吧？总共有 9 个，这都是因为 Objective-C 中不能给方法参数赋默认值的缘故 😭。那么在 Objective-C API 导入到 Swift 时，如何巧妙地利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 NS_REFINED_FOR_SWIFT 宏，SDWebImage 为其中 4 个方法添加上了宏 NS_REFINED_FOR_SWIFT。
+UIImageView (WebCache) 分类中扩展的方法非常多吧？总共有 9 个，这都是由于 Objective-C 中不能给方法参数赋默认值。那么在 Objective-C API 导入到 Swift 时，如何巧妙地利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 NS_REFINED_FOR_SWIFT 宏，SDWebImage 为其中 4 个方法添加上了宏 NS_REFINED_FOR_SWIFT。
 
 ```objectivec
 // UIImageView+WebCache.h
@@ -133,7 +135,7 @@ imageView.sd_setImage(with: nil, placeholderImage: nil)
 
 但这时候它不是调用 Objective-C 的 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder` 方法，而是调用 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;` 方法，并为 `options`、`completed` 参数赋默认值。
 
-> 如果你想调用 Objective-C 的 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder` 方法，那就以双下划线 (`__`) 开头调用，但是不建议这样使用，请遵守规范！
+> 如果你想调用 Objective-C 的 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder` 方法，那就以双下划线 `__` 开头调用，但是不建议这样使用，请遵守规范！
 
 ```swift
 // Objective-C API
@@ -206,7 +208,7 @@ open func index(of aString: String) -> Int
 
 ```swift
 extension MyClass {
-    func indexOfString(aString: String) -> Int? { 
+    func index(of aString: String) -> Int? { 
         let index = Int(__index(of: aString)) 
         if (index == NSNotFound) {
             return nil    
@@ -218,9 +220,9 @@ extension MyClass {
 
 ### NS_REFINED_FOR_SWIFT 宏对 Objective-C API 的重命名规则
 
-添加了 NS_REFINED_FOR_SWIFT 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
+NS_REFINED_FOR_SWIFT 可用于初始化方法、属性、其它方法。添加了 NS_REFINED_FOR_SWIFT 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
 
-* 如果是初始化方法，则在其第一个参数标签前面加 (`__`) 
+* 如果是初始化方法，则在其第一个参数标签前面加 `__`
 
 ```swift
 // Objective-C API
@@ -229,7 +231,7 @@ extension MyClass {
 let color = Color(__color: .red)
 ```
 
-* 如果是属性，在属性名前面加 (`__`) 
+* 如果是属性，在属性名前面加 `__`
 
 
 ```swift
@@ -239,7 +241,7 @@ let color = Color(__color: .red)
 object.__name = "zhangsan"
 ```
 
-* 其它方法，在方法名前面加 (`__`) 
+* 其它方法，在方法名前面加 `__`
 
 
 ```swift
@@ -254,7 +256,8 @@ Color.__method()
 ### 参考
 
 * [Apple｜Improving Objective-C API Declarations for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/improving_objective-c_api_declarations_for_swift)
-* [Jacob Bandes-Storch｜Help Yourself to Some Swift](https://bandes-stor.ch/blog/2015/11/28/help-yourself-to-some-swift/)
 * [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
+* [Jacob Bandes-Storch｜Help Yourself to Some Swift](https://bandes-stor.ch/blog/2015/11/28/help-yourself-to-some-swift/)
 * [小专栏｜WWDC20 10680 - 让 Objective-C 框架与 Swift 友好共存的秘籍](https://xiaozhuanlan.com/topic/1980624753)
+* [Medium｜Adapting Objective-C APIs to Swift With NS_REFINED_FOR_SWIFT](https://betterprogramming.pub/adapting-objective-c-apis-to-swift-with-ns-refined-for-swift-fc66ca88ea51)
 
