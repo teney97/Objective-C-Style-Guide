@@ -2,20 +2,20 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634022274579-75656438-4c8b-431a-b1d5-d4593c347aef.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
-### 概述
+### 前言
 
-使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API，就可以在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称，这样就支持一个 API 在两种语言下都有适当的名称。
+Swift 和 Objective-C 的 API 风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，函数命名就比较简约，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这样才能将函数作用表达得清晰明了，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们可以使用宏 `NS_SWIFT_NAME` 来为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。
 
-该宏在混编时非常有用，Swift 和 Objective-C 的 API 风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，函数命名就比较简约，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这样才能将函数作用表达得清晰明了，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们就可以使用 NS_SWIFT_NAME 宏来为 Swift 重命名 Objective-C API，优化 Swift 调用体验。
+### 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API
 
-NS_SWIFT_NAME 可用于：
+`NS_SWIFT_NAME` 可用于：
 
 * 类、协议（宏用作前缀）
 * 枚举、属性、方法或函数、类型别名等其它所有类型（宏用作后缀）
 
-### Example（Apple - Renaming Objective-C APIs for Swift）
+#### Example（Apple - Renaming Objective-C APIs for Swift）
 
-#### 重命名 Objective-C 类和属性
+##### 重命名 Objective-C 类、属性
 
 我们先来看一下优化前的 Objective-C 接口：
 
@@ -41,7 +41,7 @@ var preferences = SandwichPreferences()
 preferences.includesCrust = true
 ```
 
-使用 NS_SWIFT_NAME 重命名 Objective-C 类和属性：
+使用 `NS_SWIFT_NAME` 重命名 Objective-C 类和属性：
 
 * 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences
 * 给 includesCrust 取个简短的名字
@@ -71,7 +71,7 @@ var preferences = Sandwich.Preferences()
 preferences.isCrusty = true
 ```
 
-#### 重命名 Objective-C 枚举
+##### 重命名 Objective-C 枚举
 
 优化前：
 
@@ -93,7 +93,7 @@ public enum SandwichBreadType : Int {
 let type = SandwichBreadType.focaccia
 ```
 
-将 SandwichBreadType 变成 Sandwich.Preferences 的内部枚举。因为前面已经通过使用 NS_SWIFT_NAME 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences，所以这里直接写 `NS_SWIFT_NAME(SandwichPreferences.BreadType)` 即可。
+将 SandwichBreadType 变成 Sandwich.Preferences 的内部枚举。因为前面已经通过使用 `NS_SWIFT_NAME` 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences，所以这里直接写 `NS_SWIFT_NAME(SandwichPreferences.BreadType)` 即可。
 
 优化后：
 
@@ -117,9 +117,9 @@ extension Sandwich.Preferences {
 let type = Sandwich.Preferences.BreadType.focaccia
 ```
 
-### Example（WWDC20 - 10680 - Refine Objective-C frameworks for Swift）
+#### Example（WWDC20 - 10680 - Refine Objective-C frameworks for Swift）
 
-#### 重命名 Objective-C 方法
+##### 重命名 Objective-C 方法
 
 为了解决 API 风格上的问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)重命名 Objective-C API，例如：
 
@@ -135,7 +135,7 @@ open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 
 通常这个结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。
 
-在这个例子中，该方法获取的是某个宇航员以前所执行的任务列表，flown 应该放在参数标签里组成 flownBy 更合适。为了解决这个问题，我们使用 NS_SWIFT_NAME 重命名这个方法。
+在这个例子中，该方法获取的是某个宇航员以前所执行的任务列表，flown 应该放在参数标签里组成 flownBy 更合适。为了解决这个问题，我们使用 `NS_SWIFT_NAME` 重命名这个方法。
 
 ```objectivec
 // Declare in Objective-C
@@ -145,7 +145,7 @@ open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 open func previousMissions(flownBy astronaut: SKAstronaut) -> Set<String>
 ```
 
-#### 重命名 Objective-C 枚举
+##### 重命名 Objective-C 枚举、全局函数
 
 ```objectivec
 // Declare in Objective-C
@@ -194,7 +194,7 @@ extension SKFuel {
 public func string(from _: SKFuel.Kind) -> String
 ```
 
-NS_SWIFT_NAME 处理全局函数的能力还不止这么点。⾸先你可以将 global function 转换成 static method，做法是在 NS_SWIFT_NAME 里指明 Objective—C 的类型并在类型后面使用点语法声明⽅法名。
+`NS_SWIFT_NAME` 处理全局函数的能力还不止这么点。⾸先你可以将 global function 转换成 static method，做法是在 `NS_SWIFT_NAME` 里指明 Objective—C 的类型并在类型后面使用点语法声明⽅法名。
 
 ```objectivec
 // Declare in Objective-C
@@ -271,7 +271,7 @@ extension SKFuel.Kind {
 
 ### 小结
 
-
+Swift 和 Objective-C 的 API 风格有所不同，在混编时，虽然编译器会根据一些规则重命名 Objective-C 与 Swift API 且通常结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。本篇文章介绍了如何重命名 Objective-C 与 Swift API，掌握它们就可以人为地优化重命名 API，提升混编体验。
 
 ### 参考
 
