@@ -1,5 +1,7 @@
 ## 混编｜为 Swift 改进 Objective-C API（NS_REFINED_FOR_SWIFT）
 
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634031406142-5b7965cc-bbab-4559-978d-ce3e05b52abf.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+
 ### 前言
 
 使用宏 `NS_REFINED_FOR_SWIFT` 来改进 Objective-C API 。该宏在混编时主要参与适配器的工作，用途有：
@@ -143,6 +145,7 @@ imageView.sd_setImage(with: nil, placeholderImage: nil)
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
                  completed:(nullable SDExternalCompletionBlock)completedBlock;
+
 // In Swift, this API is imported like this:
 open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], completed completedBlock: SDExternalCompletionBlock? = nil)
 ```
@@ -157,6 +160,7 @@ open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, op
           placeholderImage:(nullable UIImage *)placeholder
                    options:(SDWebImageOptions)options
                  completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Unavailable");
+
 // Use in Swift
 let imageView = UIImageView()
 imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
