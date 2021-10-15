@@ -4,7 +4,7 @@
 
 ### 前言
 
-Swift 和 Objective-C 的 API 风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，函数命名就比较简约，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这样才能将函数作用表达得清晰明了，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们可以使用宏 `NS_SWIFT_NAME` 来为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。
+Swift 和 Objective-C 的 API 风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，函数命名就比较简约，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这样才能将函数作用表达得清晰明了，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们可以使用宏 `NS_SWIFT_NAME` 为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。
 
 ### 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API
 
