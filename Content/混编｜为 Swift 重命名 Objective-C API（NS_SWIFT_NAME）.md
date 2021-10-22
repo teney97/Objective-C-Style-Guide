@@ -11,9 +11,9 @@ Swift 和 Objective-C 的 API 命名规范有些不同，例如：
 
 因此，Swift 的方法命名比较简约。而 Objective-C 为了将方法作用表达得清晰明了，所以方法名显得略长一些，可以看看[《Effective Objective-C 2.0》19. 使用清晰而协调的命名方式](https://juejin.cn/post/6904440708006936590#heading-22)。这样就导致在混编时，一个 API 没办法保证在两种语言中都有合适的名称。
 
-为了解决这一问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)重命名导入的 Objective-C API，例如把对应类型名称的前缀和后缀去掉，并使用英文语法和词汇表来将 Objective-C 的 SEL 的第一部分分割为基名和参数标签；反之，Objective-C 会根据一些规则重命名导入的 Swift API。通常这个结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。
+为了解决这一问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)自动重命名导入的 Objective-C API，例如把对应类型名称的前缀和后缀去掉，并根据英文语法和词汇表来将 Objective-C 的 SEL 的第一部分分割为基名和参数标签；反之，Objective-C 也会根据一些规则重命名导入的 Swift API。通常这个结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。
 
-为此，我们可以使用宏 `NS_SWIFT_NAME` 为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。在本篇文章中，我们就通过 Apple 举的一些例子来看看 `NS_SWIFT_NAME` 如何使用。
+为此，我们可以使用宏 `NS_SWIFT_NAME` 为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称使用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言中都有合适的名称。在本篇文章中，我们就通过 Apple 举的一些例子来看看 `NS_SWIFT_NAME` 如何使用。
 
 ### 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API
 
@@ -52,7 +52,7 @@ preferences.includesCrust = true
 
 使用 `NS_SWIFT_NAME` 重命名 Objective-C 类和属性：
 
-* 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences
+* 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences，使其附属于 Sandwich
 * 给 includesCrust 取个简短的名字
 
 ```objectivec
@@ -102,7 +102,7 @@ public enum SandwichBreadType : Int {
 let type = SandwichBreadType.focaccia
 ```
 
-将 SandwichBreadType 变成 Sandwich.Preferences 的内部枚举。因为前面已经通过使用 `NS_SWIFT_NAME` 将 SandwichPreferences 变成 Sandwich 的内部类 Preferences，所以这里直接写 `NS_SWIFT_NAME(SandwichPreferences.BreadType)` 即可。
+将 SandwichBreadType 变成 Sandwich.Preferences 的内部枚举，注意这里需要写 Objective-C 中的名称 SandwichPreferences。
 
 优化后：
 
@@ -138,11 +138,11 @@ let type = Sandwich.Preferences.BreadType.focaccia
 open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 ```
 
-在这个例子中，Objective-C API 在导入到 Swift 中时，就根据规则重命名了，by 变成了参数标签，astronaut 变成了参数名称，基名缩短为 previousMissionsFlown。
+在这个例子中，Objective-C API 在导入到 Swift 中时就根据规则重命名了，by 变成了参数标签，astronaut 变成了参数名称，基名缩短为 previousMissionsFlown。
 
 这个结果还不错，但是一些开发人员会觉得该 Objective-C 的 SEL 没有得到正确的分割，由于该方法获取的是某个宇航员以前所执行的任务列表，所以 flown 应该放在参数标签里组成 flownBy 更合适。
 
-为了解决这个问题，我们使用 `NS_SWIFT_NAME` 重命名这个方法。
+为了解决这个问题，我们可以使用 `NS_SWIFT_NAME` 重命名这个方法，进行微调。
 
 ```objectivec
 // Declare in Objective-C
@@ -181,8 +181,6 @@ public func SKFuelKindToString(_: SKFuelKind) -> String
 1. 假如我们有一个 SKFule 类，那么我们就可以让这个枚举附属于 SKFule，将其改为 SKFuel.Kind
 2. `NS_SWIFT_NAME` 还可以用于全局函数、常量、变量等。这里我们可以重命名 SKFuelKindToString 全局函数为 string， 去掉基名中多余的信息，并添加⼀个参数标签 from
 
-> `NS_SWIFT_NAME` 还可以用于与 Swift 类型名称完全不一样的库，例如在 C 库中的小写类型名称。
-
 ```objectivec
 // Declare in Objective-C
 typedef NS_ENUM(NSInteger, SKFuelKind) {
@@ -219,7 +217,7 @@ extension SKFuel.Kind {
 }
 ```
 
-然后，你还可以将其转变为 `实例⽅法`，做法是把其中一个参数标签改为 self，例如这里就是将 from 改为 self，这样一来 Swift 也就知道在哪里传入你调用的实例。
+你还可以将其转变为 `实例⽅法`，做法是把其中一个参数标签改为 self，例如这里就是将 from 改为 self，这样一来 Swift 也就知道在哪里传入你调用的实例。
 
 ```objectivec
 // Declare in Objective-C
@@ -231,7 +229,7 @@ extension SKFuel.Kind {
 }
 ```
 
-你还可以将某个 `⽅法` 转变为⼀个 `属性`，只需要在前⾯添加 `getter:`，setter 同理。
+你还可以将这个 `⽅法` 转变为⼀个 `属性`，只需要在前⾯添加 `getter:`，setter 同理。
 
 ```objectivec
 // Declare in Objective-C
@@ -243,9 +241,11 @@ extension SKFuel.Kind {
 }
 ```
 
+`NS_SWIFT_NAME` 还可以用于与 Swift 类型名称完全不一样的库中，例如在 C 库中的小写类型名称。
+
 将这些技巧应⽤在充满函数的框架⾥，可以极大程度地重塑 API 风格。如果你在 Objective-C 和 Swift 里都用过 Core Graphics 的话，你会深有体会。Apple 称其把 `NS_SWIFT_NAME` 用在了数百个全局函数上，将它们转换为方法、属性和构造器，以更加方便地在 Swift 中使用。
 
-`NS_SWIFT_NAME` 并不万能，它也有做不到的事。例如在上个例子中，即使我们将全局函数转变为了实例属性，但你无法使用 `NS_SWIFT_NAME` 来让类型遵守 CustomStringConvertible 协议，该协议支持让 Swift 使用这个属性将 SKFuel.Kinds 转换为字符串。
+`NS_SWIFT_NAME` 也有能力不足之处。例如在上个例子中，即使我们将全局函数转变为了实例属性 description，但你无法使用 `NS_SWIFT_NAME` 来让类型遵守 [CustomStringConvertible](https://developer.apple.com/documentation/swift/customstringconvertible) 协议。
 
 但是我们可以通过一行代码，就是扩展 SKFuel.Kinds 来使其遵守 CustomStringConvertible 协议。
 
@@ -284,7 +284,7 @@ extension SKFuel.Kinds: CustomStringConvertible {}
 
 ### 小结
 
-Swift 和 Objective-C 的 API 风格有所不同，在混编时，虽然编译器会根据一些规则重命名 Objective-C 与 Swift API 且通常结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。本篇文章介绍了如何重命名 Objective-C 与 Swift API，掌握它们就可以人为地优化重命名 API，提升混编体验。
+Swift 和 Objective-C 的 API 命名规范有些不同，在混编时，虽然编译器会根据一些规则重命名 Objective-C 与 Swift API 且通常结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。本篇文章介绍了如何重命名 Objective-C 与 Swift API，掌握它们就可以人为地优化重命名 API，优化混编体验。
 
 ### 参考
 
