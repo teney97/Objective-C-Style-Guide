@@ -4,7 +4,16 @@
 
 ### 前言
 
-Swift 和 Objective-C 的 API 风格有所不同，例如 Swift 的 API 是由基名和参数标签组成的，函数命名就比较简约，⽽ Objective-C 基本上只有参数标签，没有单独的基名，所以基名的信息会包含在第⼀个参数标签⾥，这样才能将函数作用表达得清晰明了，这也导致了 Objective-C 的方法名会显得略长一些。为此，我们可以使用宏 `NS_SWIFT_NAME` 为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。
+Swift 和 Objective-C 的 API 命名规范有些不同，例如：
+
+1. Swift 的方法由基名和参数标签组成，而 Objective-C 则只有参数标签，没有单独的基名，所以基名的信息会包含在第一个参数标签里；
+2. Swift 的参数标签有时会省略从类型上即可看出的明显信息，而 Objective-C 一般不遵循此规则。
+
+因此，Swift 的方法命名比较简约。而 Objective-C 为了将方法作用表达得清晰明了，所以方法名显得略长一些，可以看看[《Effective Objective-C 2.0》19. 使用清晰而协调的命名方式](https://juejin.cn/post/6904440708006936590#heading-22)。这样就导致在混编时，一个 API 没办法保证在两种语言中都有合适的名称。
+
+为了解决这一问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)重命名导入的 Objective-C API，例如把对应类型名称的前缀和后缀去掉，并使用英文语法和词汇表来将 Objective-C 的 SEL 的第一部分分割为基名和参数标签；反之，Objective-C 会根据一些规则重命名导入的 Swift API。通常这个结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。
+
+为此，我们可以使用宏 `NS_SWIFT_NAME` 为 Swift 重命名 Objective-C API，来支持在 Swift 中以指定名称调用 Objective-C API，而且在 Objective-C 中保留了原始名称。除此之外，我们还可以通过 `@objc` 为  Objective-C 重命名 Swift API。这样就支持一个 API 在两种语言下都有合适的名称。在本篇文章中，我们就通过 Apple 举的一些例子来看看 `NS_SWIFT_NAME` 如何使用。
 
 ### 使用宏 NS_SWIFT_NAME 为 Swift 重命名 Objective-C API
 
@@ -121,8 +130,6 @@ let type = Sandwich.Preferences.BreadType.focaccia
 
 ##### 重命名 Objective-C 方法
 
-为了解决 API 风格上的问题，Swift 会根据一些[规则](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)重命名 Objective-C API，例如：
-
 ```objectivec
 // Declare in Objective-C
 - (NSSet<NSString *> *)previousMissionsFlownByAstronaut:(SKAstronaut *)astronaut;
@@ -131,11 +138,11 @@ let type = Sandwich.Preferences.BreadType.focaccia
 open func previousMissionsFlown(by astronaut: SKAstronaut) -> Set<String>
 ```
 
-在这个例子中，by 变成了参数标签，astronaut 变成了参数名称，方法名缩短为 previousMissionsFlown。
+在这个例子中，Objective-C API 在导入到 Swift 中时，就根据规则重命名了，by 变成了参数标签，astronaut 变成了参数名称，基名缩短为 previousMissionsFlown。
 
-通常这个结果还不错，但这毕竟是计算机的审美结果，很难满足开发者的诉求。
+这个结果还不错，但是一些开发人员会觉得该 Objective-C 的 SEL 没有得到正确的分割，由于该方法获取的是某个宇航员以前所执行的任务列表，所以 flown 应该放在参数标签里组成 flownBy 更合适。
 
-在这个例子中，该方法获取的是某个宇航员以前所执行的任务列表，flown 应该放在参数标签里组成 flownBy 更合适。为了解决这个问题，我们使用 `NS_SWIFT_NAME` 重命名这个方法。
+为了解决这个问题，我们使用 `NS_SWIFT_NAME` 重命名这个方法。
 
 ```objectivec
 // Declare in Objective-C
@@ -167,10 +174,14 @@ public enum SKFuelKind : Int {
 public func SKFuelKindToString(_: SKFuelKind) -> String
 ```
 
-优化点：
+在这个例子中，Generated Swift Interface 已经挺不错了。例如使用 NS_ENUM 来声明 Objective-C 枚举，这样在导入到 Swift 中时就会变成 enum 类型，可以看看 [iOS 混编｜为 Objective-C 添加枚举宏，改善混编体验 —— NS_ENUM](https://juejin.cn/post/6999460035508043807#heading-3)。
 
-1. 针对目前框架，我们有一个 SKFule 类，此时我们可以让这个枚举和 SKFule 联合使⽤，所以我们将其改为 SKFuel.Kind
-2. 重命名 SKFuelKindToString 全局函数为 string， 去掉额外的信息，添加⼀个参数标签 from
+不过，还是存在可以改进的地方：
+
+1. 假如我们有一个 SKFule 类，那么我们就可以让这个枚举附属于 SKFule，将其改为 SKFuel.Kind
+2. `NS_SWIFT_NAME` 还可以用于全局函数、常量、变量等。这里我们可以重命名 SKFuelKindToString 全局函数为 string， 去掉基名中多余的信息，并添加⼀个参数标签 from
+
+> `NS_SWIFT_NAME` 还可以用于与 Swift 类型名称完全不一样的库，例如在 C 库中的小写类型名称。
 
 ```objectivec
 // Declare in Objective-C
@@ -194,7 +205,9 @@ extension SKFuel {
 public func string(from _: SKFuel.Kind) -> String
 ```
 
-`NS_SWIFT_NAME` 处理全局函数的能力还不止这么点。⾸先你可以将 global function 转换成 static method，做法是在 `NS_SWIFT_NAME` 里指明 Objective—C 的类型并在类型后面使用点语法声明⽅法名。
+有意思的是，`NS_SWIFT_NAME` 在处理全局常量、变量，特别是在处理全局函数时，它的能力更加强大，能够极大地改变 API。
+
+⾸先，将 `全局函数` 转变为 `静态方法`，做法是通过在 `NS_SWIFT_NAME` 里指定类型的 Objective-C 名称，然后加一个点，再加上静态方法的名称。
 
 ```objectivec
 // Declare in Objective-C
@@ -206,7 +219,7 @@ extension SKFuel.Kind {
 }
 ```
 
-然后，你还可以将其变为实例⽅法！
+然后，你还可以将其转变为 `实例⽅法`，做法是把其中一个参数标签改为 self，例如这里就是将 from 改为 self，这样一来 Swift 也就知道在哪里传入你调用的实例。
 
 ```objectivec
 // Declare in Objective-C
@@ -218,7 +231,7 @@ extension SKFuel.Kind {
 }
 ```
 
-最后，你也可以将某个⽅法变为⼀个属性，只需要在前⾯添加 `getter:`，setter 同理。
+你还可以将某个 `⽅法` 转变为⼀个 `属性`，只需要在前⾯添加 `getter:`，setter 同理。
 
 ```objectivec
 // Declare in Objective-C
@@ -230,19 +243,19 @@ extension SKFuel.Kind {
 }
 ```
 
-将这些技术应⽤在充满 C 函数的框架⾥，可以很好的重塑 API，如果你用过 Core Graphics 的话，你会深有体会！
+将这些技巧应⽤在充满函数的框架⾥，可以极大程度地重塑 API 风格。如果你在 Objective-C 和 Swift 里都用过 Core Graphics 的话，你会深有体会。Apple 称其把 `NS_SWIFT_NAME` 用在了数百个全局函数上，将它们转换为方法、属性和构造器，以更加方便地在 Swift 中使用。
 
-下⾯要说说 `NS_SWIFT_NAME` 的能⼒边界，例如刚才的那个 getter 例子，即使你将⽅法名改为 description，你也⽆法让这个类型遵守 string convertible protocol。
+`NS_SWIFT_NAME` 并不万能，它也有做不到的事。例如在上个例子中，即使我们将全局函数转变为了实例属性，但你无法使用 `NS_SWIFT_NAME` 来让类型遵守 CustomStringConvertible 协议，该协议支持让 Swift 使用这个属性将 SKFuel.Kinds 转换为字符串。
 
-但是我们可以通过在 Swift 文件里添加扩展来使其满足 protocol conformance！
+但是我们可以通过一行代码，就是扩展 SKFuel.Kinds 来使其遵守 CustomStringConvertible 协议。
 
-如下图所示，给 SKFuel.Kind 写了⼀个扩展，并使其符合⾃定义字符串转换协议，由于 Objective-C 头文件已经⽤ `NS_SWIFT_NAME` 提供了相应的属性，所以写成这样，我们的 SKFuel.Kind 已经遵守了相应的协议并满足其使用要求。
-
-![](https://images.xiaozhuanlan.com/photo/2020/5f7e4e328f96a4713c2862454e588e88.png)
+```swift
+extension SKFuel.Kinds: CustomStringConvertible {}
+```
 
 ### Extension：为 Objective-C 重命名 Swift API
 
-可以在 projectName-Swift.h 文件中查看编译器为 Swift 接口生成的 Objective-C 接口，编译器也会根据一些规则为 Objective-C 重命名 Swift API，通常这个结果也还不错，但有时候还是存在优化空间的，这时候我们也可以重命名 Swift API。
+我们可以在 projectName-Swift.h 文件中查看编译器为 Swift 接口生成的 Objective-C 接口，编译器也会根据一些规则为 Objective-C 重命名 Swift API，通常这个结果也还不错，但有时候还是存在优化空间的，这时候我们也可以重命名 Swift API。
 
 我们再拿上文 “获取某个宇航员以前所执行的任务列表的方法” 的例子，假如这个方法定义在 Swift 类中。
 
@@ -276,7 +289,7 @@ Swift 和 Objective-C 的 API 风格有所不同，在混编时，虽然编译�
 ### 参考
 
 * [Apple｜Renaming Objective-C APIs for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/renaming_objective-c_apis_for_swift)
-* [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
 * [Apple｜CToSwiftNameTranslation](https://github.com/apple/swift/blob/main/docs/CToSwiftNameTranslation.md)
+* [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
 * [WWDC 内参｜WWDC20 10680 - 让 Objective-C 框架与 Swift 友好共存的秘籍](https://xiaozhuanlan.com/topic/1980624753#sectionobjectivec)
 
