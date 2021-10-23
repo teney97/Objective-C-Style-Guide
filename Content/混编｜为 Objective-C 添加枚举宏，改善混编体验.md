@@ -147,7 +147,7 @@ public enum UITableViewCellStyle : Int {
 let style = UITableViewCellStyle.default
 ```
 
-这个知识点看似没用，实则大大有用。在 Objective-C 中，除了使用 NS_ENUM 宏，还可以像如下等方式定义枚举。它或许是你或同事的编码习惯，又或许是历史遗留的代码。虽然这样的写法并没有错，但 Generated Swift Interface 却不尽人意，导致在 Swift 中使用时只能使用原始的完整的枚举名称。
+这个知识点看似没用，实则大大有用。在 Objective-C 中，除了使用 NS_ENUM 宏，还可以像如下等方式定义枚举。它或许是你或同事的编码习惯，又或许是历史遗留的代码。虽然这样的写法并没有错，但 Generated Swift Interface 却不尽如人意，导致在 Swift 中使用时只能使用原始的完整的枚举名称。
 
 ```objectivec
 // Declare in Objective-C
