@@ -10,7 +10,7 @@
 
 在 Objective-C 与 Swift 混编的过程中，我遇到了如下问题：
 
-我在 Objective-C Interface 中使用 typedef 为 NSString * 取了一个有意义的类型别名 TimerID，但 Generated Swift Interface 却不尽人意。在方法参数中 TimerID 类型被转为了 String，而 TimerID 却还是 NSString 的类型别名。
+我在 Objective-C Interface 中使用 typedef 为 NSString * 取了一个有意义的类型别名 TimerID，但 Generated Swift Interface 却不尽如人意。在方法参数中 TimerID 类型被转为了 String，而 TimerID 却还是 NSString 的类型别名。
 
 ```swift
 // Objective-C Interface
