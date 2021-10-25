@@ -6,7 +6,7 @@
 
 使用宏 `NS_REFINED_FOR_SWIFT` 来改进 Objective-C API 。该宏在混编时主要参与适配器的工作，用途有：
 
-* 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似的底层实现
+* 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似但不同的底层实现
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
 * 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以便该 API 与其它 Swift API 相匹配
 * 当一组 Objective-C API 的关系为：其中有一个全能方法，其它方法均调用此方法，并为一些参数赋默认值，而且方法数量较多时，可以使用该宏将一些简单的不常用的方法隐式地标记为不可用，留下全能方法以及常用的方法。利用 Swift 可以为参数赋默认值的优势，来减少这组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
@@ -256,6 +256,8 @@ Color.__method()
 ```
 
 > 注意：NS_REFINED_FOR_SWIFT 和 NS_SWIFT_NAME 一起用的话，NS_REFINED_FOR_SWIFT 不生效，而是以 NS_SWIFT_NAME 指定的名称重命名 Objective-C API。
+
+### 小结
 
 ### 参考
 
