@@ -2,15 +2,17 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634031406142-5b7965cc-bbab-4559-978d-ce3e05b52abf.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
+关键词：NS_REFINED_FOR_SWIFT
+
 ### 前言
 
-可以使用宏 `NS_REFINED_FOR_SWIFT` 来为 Swift 改进 Objective-C API 。该宏在混编时主要参与适配器的工作，用途有：
+可以使用宏 `NS_REFINED_FOR_SWIFT` 来为 Swift 改进 Objective-C API ，应用场景有：
 
 * 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似的底层实现
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
 * 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以使该 API 与其它 Swift API 更匹配
-* 利用 Swift 可以为参数赋默认值的优势，来减少一组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
-* 做一些兼容性的东西，比如 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_Other）
+* 利用 Swift 支持默认参数值的优势，来减少导入到 Swift 中的一组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
+* 解决 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期的问题。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_Other）
 
 ### Example_Apple
 
@@ -109,7 +111,9 @@ var a = color.rgba.alpha
 
 接下来让我们看看 SDWebImage 是怎么使用 `NS_REFINED_FOR_SWIFT` 的。
 
-由于在 Objective-C 中不能给方法参数赋默认值，导致一组 API 在迭代过程中就可能会越来越多，像 UIImageView (WebCache) 分类中扩展的方法就多达 9 个。那么，在 Objective-C API 导入到 Swift 时，如何巧妙地利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 `NS_REFINED_FOR_SWIFT` 宏，SDWebImage 为其中 4 个方法添加上了该宏。
+Objective-C 方法不支持默认参数值，通常是提供一个多参数的全能方法，然后提供几个少参数的便利方法来调用全能方法，并为一些参数赋默认值。这样组合不灵活且扩展不方便，而且在迭代过程中这一组 API 数量可能会越来越多。像 UIImageView (WebCache) 分类中扩展的方法就多达 9 个。
+
+那么，在 Objective-C API 导入到 Swift 时，如何利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 `NS_REFINED_FOR_SWIFT` 宏，SDWebImage 为其中 4 个方法添加上了该宏。
 
 ```objectivec
 // UIImageView+WebCache.h
@@ -124,7 +128,7 @@ var a = color.rgba.alpha
                  completed:(nullable SDExternalCompletionBlock)completedBlock NS_REFINED_FOR_SWIFT;
 ```
 
-这样在 Swift 中调用的时候代码补全只会提示剩下的 5 个 API。
+在 Swift 中调用的时候，代码补全只会提示剩下的 5 个 API。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1629873847844-91a338b5-9100-40b4-8e65-642b07e092a8.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
@@ -161,7 +165,7 @@ open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, op
                    options:(SDWebImageOptions)options
                  completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Unavailable");
 
-// Use in Swift
+// Use it in Swift
 let imageView = UIImageView()
 imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 ```
@@ -180,11 +184,26 @@ imageView.sd_setImage(with: nil, placeholderImage: nil, completed: nil)
 // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 ```
 
-现在，你是不是对 `NS_REFINED_FOR_SWIFT` 宏的用法掌握得更多了呢？
+其实，更快捷的做法是直接查看 Generated Swift Interface：
+
+```swift
+extension NSImageView {
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?)
+    open func sd_setImage(with url: URL?, completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?, progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
+}
+```
+
+由此，我们可以推断出，Objective-C 方法在导入到 Swift 中时，哪些参数支持默认值：
+
+* 可选枚举
+* 作为最后一个参数的 block
 
 ### Example_Other
 
-`NS_REFINED_FOR_SWIFT` 宏也用于做一些兼容性的东西，比如 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等。
+`NS_REFINED_FOR_SWIFT` 宏也可以用于解决 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期的问题。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等。
 
 举个具体的例子：
 
@@ -231,7 +250,7 @@ extension MyClass {
 ```swift
 // Objective-C API
 - (instancetype)initWithColor:(UIColor *)color NS_REFINED_FOR_SWIFT;
-// Use in Swift
+// Use it in Swift
 let color = Color(__color: .red)
 ```
 
@@ -241,7 +260,7 @@ let color = Color(__color: .red)
 ```swift
 // Objective-C API
 @property (nonatomic, copy) NSString *name NS_REFINED_FOR_SWIFT;
-// Use in Swift
+// Use it in Swift
 object.__name = "zhangsan"
 ```
 
@@ -251,7 +270,7 @@ object.__name = "zhangsan"
 ```swift
 // Objective-C API
 + (void)method NS_REFINED_FOR_SWIFT;
-// Use in Swift
+// Use it in Swift
 Color.__method()
 ```
 
@@ -259,11 +278,11 @@ Color.__method()
 
 ### 小结
 
+本文通过几个例子讲解了 `NS_REFINED_FOR_SWIFT` 的应用场景，让 Objective-C API 在 Swift 中更好地呈现，相信它在你混编的过程中一定会有用武之地的！
+
 ### 参考
 
 * [Apple｜Improving Objective-C API Declarations for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/improving_objective-c_api_declarations_for_swift)
 * [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
 * [Jacob Bandes-Storch｜Help Yourself to Some Swift](https://bandes-stor.ch/blog/2015/11/28/help-yourself-to-some-swift/)
-* [WWDC 内参｜WWDC20 10680 - 让 Objective-C 框架与 Swift 友好共存的秘籍](https://xiaozhuanlan.com/topic/1980624753#sectionobjectivec)
 * [Medium｜Adapting Objective-C APIs to Swift With NS_REFINED_FOR_SWIFT](https://betterprogramming.pub/adapting-objective-c-apis-to-swift-with-ns-refined-for-swift-fc66ca88ea51)
-
