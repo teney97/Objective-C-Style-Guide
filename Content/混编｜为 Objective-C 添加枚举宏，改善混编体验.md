@@ -53,7 +53,7 @@ let subtitle = dict[DCDictionaryKeySubtitle] as! String
 let count    = dict[DCDictionaryKeyCount]    as! Int
 ```
 
-> 你可以查看编译器为 Objective-C 接口生成的 Swift 接口，参考：[Tip：如何查看编译器为 Objective-C 接口生成的 Swift 接口？](https://github.com/teney97/Objective-C-Style-Guide/blob/main/内容/混编｜Tip：如何查看编译器为%20Objective-C%20API%20生成的%20Swift%20API.md)
+> 你可以查看编译器为 Objective-C 接口生成的 Swift 接口，参考：[查看编译器为 Objective-C 接口生成的 Swift 接口](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%BA%20Objective-C%20%E6%8E%A5%E5%8F%A3%E7%94%9F%E6%88%90%E7%9A%84%20Swift%20%E6%8E%A5%E5%8F%A3.md)
 
 这样的写法虽然是没有错的，但却存在着问题：
 
