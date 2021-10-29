@@ -2,6 +2,8 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634001510785-b344fbf4-f5b2-4e6e-a8e1-ffe270fa7ffc.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
+关键词：NS_ENUM、NS_OPTIONS、NS_CLOSED_ENUM、NS_TYPED_ENUM、NS_TYPED_EXTENSIBLE_ENUM、NS_STRING_ENUM、NS_EXTENSIBLE_STRING_ENUM、@unknown default
+
 ### 前言
 
 使用 Objective-C 的你，是否对 `NS_CLOSED_ENUM`、`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM`  这几个枚举宏感到陌生呢？笔者对修饰 NSNotificationName 的 `NS_EXTENSIBLE_STRING_ENUM` 宏比较好奇，便展开了探索，于是就有了本文。
