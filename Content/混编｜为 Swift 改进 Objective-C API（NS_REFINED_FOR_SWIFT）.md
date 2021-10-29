@@ -132,16 +132,15 @@ Objective-C 方法不支持默认参数值，通常是提供一个多参数的�
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1629873847844-91a338b5-9100-40b4-8e65-642b07e092a8.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
-你还是可以调用 `sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?)`：
+你还是可以调用 **_sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?)_**：
 
 ```swift
-let imageView = UIImageView()
 imageView.sd_setImage(with: nil, placeholderImage: nil)
 ```
 
-但这时候它不是调用 Objective-C 的 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder;` 方法，而是调用 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;` 方法，并为 options、completed 参数赋默认值。
+但这时候它不是调用 Objective-C 的 **_- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder;_** 方法，而是调用 **_- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;_** 方法，并为 options、completed 参数赋默认值。
 
-> 如果你想调用 Objective-C 的 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder` 方法，那就以双下划线 `__` 开头调用，但是不建议更没必要这样使用，请遵守规范！
+> 如果你想调用 Objective-C 的 **_- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder_** 方法，那就以双下划线 `__` 开头调用，但是不建议更没必要这样使用，请遵守规范！
 
 ```swift
 // Objective-C API
@@ -156,7 +155,7 @@ open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, op
 
 如何验证呢？
 
-很简单，我们可以使用 `NS_SWIFT_UNAVAILABLE` 宏将 `- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;` 方法标记为在 Swift 中不可用，这时候就编译错误了：
+很简单，我们可以使用 `NS_SWIFT_UNAVAILABLE` 宏将 **_- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;_** 方法标记为在 Swift 中不可用，这时候就编译错误了：
 
 ```swift
 // Objective-C API
@@ -166,14 +165,12 @@ open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, op
                  completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Unavailable");
 
 // Use it in Swift
-let imageView = UIImageView()
 imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
 ```
 
-我们再通过 `NS_SWIFT_UNAVAILABLE` 宏来看看这 4 个用 `NS_REFINED_FOR_SWIFT` 标记的 API 最终都是调用哪个方法：
+我们再通过 `NS_SWIFT_UNAVAILABLE` 宏来看看调用这 4 个用 `NS_REFINED_FOR_SWIFT` 标记的 API 最终都是调用哪个方法：
 
 ```swift
-let imageView = UIImageView()
 imageView.sd_setImage(with: nil)
 // Error: 'sd_setImage(with:completed:)' is unavailable in Swift: Unavailable
 imageView.sd_setImage(with: nil, placeholderImage: nil)
