@@ -2,6 +2,8 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1634022274579-75656438-4c8b-431a-b1d5-d4593c347aef.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
+关键词：NS_SWIFT_NAME、@objc
+
 ### 前言
 
 Swift 和 Objective-C 的 API 命名规范有些不同，例如：
