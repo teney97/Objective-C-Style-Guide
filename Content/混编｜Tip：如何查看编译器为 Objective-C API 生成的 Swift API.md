@@ -1,4 +1,4 @@
-## 混编｜Tip：如何查看编译器为 Objective-C 接口生成的 Swift 接口？
+## 混编｜查看编译器为 Objective-C 接口生成的 Swift 接口
 
 ### 查看编译器为 Objective-C 接口生成的 Swift 接口
 
