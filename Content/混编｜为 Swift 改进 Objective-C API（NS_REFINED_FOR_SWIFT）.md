@@ -111,7 +111,7 @@ var a = color.rgba.alpha
 
 接下来让我们看看 SDWebImage 是怎么使用 `NS_REFINED_FOR_SWIFT` 的。
 
-Objective-C 方法不支持默认参数值，通常是提供一个多参数的全能方法，然后提供几个少参数的便利方法来调用全能方法，并为一些参数赋默认值。这样组合不灵活且扩展不方便，而且在迭代过程中这一组 API 数量可能会越来越多。像 UIImageView (WebCache) 分类中扩展的方法就多达 9 个。
+Objective-C 方法不支持默认参数值，通常是提供一个多参数的全能方法，然后提供几个少参数的便利方法来调用全能方法，并为一些参数赋默认值。这种方式组合不灵活且扩展不方便，而且在迭代过程中这一组 API 数量可能会越来越多。像 UIImageView (WebCache) 分类中扩展的方法就多达 9 个。
 
 那么，在 Objective-C API 导入到 Swift 时，如何利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 `NS_REFINED_FOR_SWIFT` 宏，SDWebImage 为其中 4 个方法添加上了该宏。
 
