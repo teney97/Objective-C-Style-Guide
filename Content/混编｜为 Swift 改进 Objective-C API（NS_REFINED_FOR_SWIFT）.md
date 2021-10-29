@@ -278,7 +278,7 @@ Color.__method()
 
 ### 小结
 
-本文通过几个例子讲解了 `NS_REFINED_FOR_SWIFT` 的应用场景，让 Objective-C API 在 Swift 中更好地呈现，相信它在你混编的过程中一定会有用武之地的！
+本文通过几个例子讲解了宏 `NS_REFINED_FOR_SWIFT` 的应用场景，让 Objective-C API 在 Swift 中更好地呈现，相信它在你混编的过程中一定会有用武之地的！
 
 ### 参考
 
