@@ -145,7 +145,7 @@ public enum UITableViewCellStyle : Int {
     case subtitle = 3
 }
 
-// Use in Swift
+// Use it in Swift
 let style = UITableViewCellStyle.default
 ```
 
@@ -167,7 +167,7 @@ public struct UITableViewCellStyle : Equatable, RawRepresentable {
     public var rawValue: UInt
 }
 
-// Use in Swift
+// Use it in Swift
 let style = UITableViewCellStyleDefault
 ```
 
@@ -244,7 +244,7 @@ public struct UIViewAutoresizing: OptionSet {
     public static var flexibleBottomMargin: UIViewAutoresizing { get }
 }
 
-// Use in Swift
+// Use it in Swift
 let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 ```
 
@@ -274,7 +274,7 @@ extension TrafficLightColor {
     public static let green: TrafficLightColor
 }
 
-// Use in Swift
+// Use it in Swift
 let color = TrafficLightColor.red
 ```
 

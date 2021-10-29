@@ -34,7 +34,7 @@ open class Timer : NSObject {
 这在 Swift 中使用的时候就遇到了类型冲突问题。由于 TimerID 是 NSString 的类型别名，而 NSString 又不能隐式转换为 String。
 
 ```swift
-// Use in Swift
+// Use it in Swift
 let timerID: TimerID = ""
 Timer.cancel(timerID: timerID) // Error: 'TimerID' (aka 'NSString') is not implicitly convertible to 'String'; did you mean to use 'as' to explicitly convert? Insert ' as String'
 ```
@@ -100,7 +100,7 @@ open class Timer : NSObject {
     open class func cancel(timerID: TimerID)
 }
 
-// Use in Swift
+// Use it in Swift
 let timerID = TimerID(rawValue: "")
 Timer.cancel(timerID: timerID)
 ```

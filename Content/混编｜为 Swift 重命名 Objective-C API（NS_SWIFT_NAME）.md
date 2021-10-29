@@ -47,7 +47,7 @@ open class SandwichPreferences : NSObject {
 open class Sandwich : NSObject {
 }
 
-// Use in Swift
+// Use it in Swift
 var preferences = SandwichPreferences()
 preferences.includesCrust = true
 ```
@@ -77,7 +77,7 @@ extension Sandwich {
 open class Sandwich : NSObject {
 }
 
-// Use in Swift
+// Use it in Swift
 var preferences = Sandwich.Preferences()
 preferences.isCrusty = true
 ```
@@ -100,7 +100,7 @@ public enum SandwichBreadType : Int {
     case focaccia = 3
 }
 
-// Use in Swift
+// Use it in Swift
 let type = SandwichBreadType.focaccia
 ```
 
@@ -124,7 +124,7 @@ extension Sandwich.Preferences {
     }
 }
 
-// Use in Swift
+// Use it in Swift
 let type = Sandwich.Preferences.BreadType.focaccia
 ```
 
