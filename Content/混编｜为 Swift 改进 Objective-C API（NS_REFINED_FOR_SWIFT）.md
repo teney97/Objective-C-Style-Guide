@@ -113,7 +113,7 @@ var a = color.rgba.alpha
 
 Objective-C 方法不支持默认参数值，通常是提供一个多参数的全能方法，然后提供几个少参数的便利方法来调用全能方法，并为一些参数赋默认值。这种方式组合不灵活且扩展不方便，而且在迭代过程中这一组 API 数量可能会越来越多。像 UIImageView (WebCache) 分类中扩展的方法就多达 9 个。
 
-那么，在 Objective-C API 导入到 Swift 时，如何利用上 Swift 可以为方法参数赋默认值的优点呢？答案就是使用 `NS_REFINED_FOR_SWIFT` 宏，SDWebImage 为其中 4 个方法添加上了该宏。
+那么，在 Objective-C API 导入到 Swift 时，如何利用上 Swift 可以为方法参数赋默认值的优点呢？可以使用 `NS_REFINED_FOR_SWIFT` 宏，SDWebImage 为其中 4 个方法添加上了该宏。
 
 ```objectivec
 // UIImageView+WebCache.h
@@ -153,43 +153,15 @@ imageView.sd_setImage(with: nil, placeholderImage: nil)
 open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], completed completedBlock: SDExternalCompletionBlock? = nil)
 ```
 
-如何验证呢？
-
-很简单，我们可以使用 `NS_SWIFT_UNAVAILABLE` 宏将 **_- (void)sd_setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholder options:(SDWebImageOptions)options completed:(nullable SDExternalCompletionBlock)completedBlock;_** 方法标记为在 Swift 中不可用，这时候就编译错误了：
+我们来看看 Generated Swift Interface：
 
 ```swift
-// Objective-C API
-- (void)sd_setImageWithURL:(nullable NSURL *)url
-          placeholderImage:(nullable UIImage *)placeholder
-                   options:(SDWebImageOptions)options
-                 completed:(nullable SDExternalCompletionBlock)completedBlock NS_SWIFT_UNAVAILABLE("Unavailable");
-
-// Use it in Swift
-imageView.sd_setImage(with: nil, placeholderImage: nil) // Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
-```
-
-我们再通过 `NS_SWIFT_UNAVAILABLE` 宏来看看调用这 4 个用 `NS_REFINED_FOR_SWIFT` 标记的 API 最终都是调用哪个方法：
-
-```swift
-imageView.sd_setImage(with: nil)
-// Error: 'sd_setImage(with:completed:)' is unavailable in Swift: Unavailable
-imageView.sd_setImage(with: nil, placeholderImage: nil)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
-imageView.sd_setImage(with: nil, placeholderImage: nil, options: .retryFailed)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
-imageView.sd_setImage(with: nil, placeholderImage: nil, completed: nil)
-// Error: 'sd_setImage(with:placeholderImage:options:completed:)' is unavailable in Swift: Unavailable
-```
-
-其实，更快捷的做法是直接查看 Generated Swift Interface：
-
-```swift
-extension NSImageView {
-    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?)
+extension UIImageView {
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?)
     open func sd_setImage(with url: URL?, completed completedBlock: SDExternalCompletionBlock? = nil)
-    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], completed completedBlock: SDExternalCompletionBlock? = nil)
-    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
-    open func sd_setImage(with url: URL?, placeholderImage placeholder: NSImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?, progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
+    open func sd_setImage(with url: URL?, placeholderImage placeholder: UIImage?, options: SDWebImageOptions = [], context: [SDWebImageContextOption : Any]?, progress progressBlock: SDImageLoaderProgressBlock?, completed completedBlock: SDExternalCompletionBlock? = nil)
 }
 ```
 
