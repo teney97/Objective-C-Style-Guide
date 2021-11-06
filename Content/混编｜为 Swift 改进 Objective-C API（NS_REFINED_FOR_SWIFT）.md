@@ -6,7 +6,7 @@
 
 ### 前言
 
-宏 `NS_REFINED_FOR_SWIFT` 于 [Xcode 7](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW326) 引入，它可用于在 Swift 中隐藏 Objective-C API，以便在 Swift 中提供相同 API 的更好版本，同时仍然可以使用原始 Objective-C 实现，以为 Swift 改进 Objective-C API 。具体的应用场景有：
+宏 `NS_REFINED_FOR_SWIFT` 于 [Xcode 7](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW326) 引入，它可用于在 Swift 中隐藏 Objective-C API，以便在 Swift 中提供相同 API 的更好版本，同时仍然可以使用原始 Objective-C 实现。具体的应用场景有：
 
 * 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似的底层实现
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
