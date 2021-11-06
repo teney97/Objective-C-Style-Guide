@@ -6,7 +6,7 @@
 
 ### 前言
 
-可以使用宏 `NS_REFINED_FOR_SWIFT` 来为 Swift 改进 Objective-C API ，应用场景有：
+宏 `NS_REFINED_FOR_SWIFT` 于 [Xcode 7](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW326) 引入，它可用于在 Swift 中隐藏 Objective-C API，以便在 Swift 中提供相同 API 的更好版本，同时仍然可以使用原始 Objective-C 实现，以为 Swift 改进 Objective-C API 。具体的应用场景有：
 
 * 你想在 Swift 中使用某个 Objective-C API 时，使用不同的方法声明，但要使用类似的底层实现
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
@@ -214,7 +214,7 @@ extension MyClass {
 
 `NS_REFINED_FOR_SWIFT` 可用于初始化方法、属性、其它方法。添加了 `NS_REFINED_FOR_SWIFT` 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
 
-* 如果是初始化方法，则在其第一个参数标签前面加 `__`
+* 如果是初始化方法，则在其第一个参数标签前面加 "__"
 
 ```swift
 // Objective-C API
@@ -223,17 +223,7 @@ extension MyClass {
 let color = Color(__color: .red)
 ```
 
-* 如果是属性，在属性名前面加 `__`
-
-
-```swift
-// Objective-C API
-@property (nonatomic, copy) NSString *name NS_REFINED_FOR_SWIFT;
-// Use it in Swift
-object.__name = "zhangsan"
-```
-
-* 其它方法，在方法名前面加 `__`
+* 其它方法，在方法名前面加 "__"
 
 
 ```swift
@@ -241,6 +231,16 @@ object.__name = "zhangsan"
 + (void)method NS_REFINED_FOR_SWIFT;
 // Use it in Swift
 Color.__method()
+```
+
+* 下标方法将被视为任何其它方法，在方法名前面加 "__"，而不是作为 Swift 下标导入。
+* 其他声明将在其名称前加上 "__"，例如属性：
+
+```swift
+// Objective-C API
+@property (nonatomic, copy) NSString *name NS_REFINED_FOR_SWIFT;
+// Use it in Swift
+object.__name = "zhangsan"
 ```
 
 > 注意：`NS_REFINED_FOR_SWIFT` 和 `NS_SWIFT_NAME` 一起用的话，`NS_REFINED_FOR_SWIFT` 不生效，而是以 `NS_SWIFT_NAME` 指定的名称重命名 Objective-C API。
@@ -251,6 +251,7 @@ Color.__method()
 
 ### 参考
 
+* [Apple｜Xcode Release Notes - Xcode 7](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW326)
 * [Apple｜Improving Objective-C API Declarations for Swift](https://developer.apple.com/documentation/swift/objective-c_and_c_code_customization/improving_objective-c_api_declarations_for_swift)
 * [Apple｜WWDC20 10680 - Refine Objective-C frameworks for Swift](https://developer.apple.com/videos/play/wwdc2020/10680/)
 * [Jacob Bandes-Storch｜Help Yourself to Some Swift](https://bandes-stor.ch/blog/2015/11/28/help-yourself-to-some-swift/)
