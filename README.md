@@ -10,9 +10,10 @@
 * [2.将 Objective-C typedef NSString 作为 String 桥接到 Swift 中（NS_SWIFT_BRIDGED_TYPEDEF）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E4%BD%BF%E7%94%A8%20NS_SWIFT_BRIDGED_TYPEDEF%20%E5%B0%86%20Objective-C%20typedef%20NSString%20%E4%BD%9C%E4%B8%BA%20String%20%E6%A1%A5%E6%8E%A5%E5%88%B0%20Swift%20%E4%B8%AD.md)
 * [3.为 Swift 重命名 Objective-C API（NS_SWIFT_NAME）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20重命名%20Objective-C%20API（NS_SWIFT_NAME）.md)
 * [4.为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20改进%20Objective-C%20API%20声明（NS_REFINED_FOR_SWIFT）.md)
-* [5.限制 API 可用性](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E9%99%90%E5%88%B6%20API%20%E5%8F%AF%E7%94%A8%E6%80%A7.md）.md)
-* [6.CToSwiftNameTranslation](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9CCToSwiftNameTranslation.md)
-* 在 Objective-C API 中指定可空性
+* [5.限制 API 可用性](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E9%99%90%E5%88%B6%20API%20%E5%8F%AF%E7%94%A8%E6%80%A7.md)
+* [6.在 Objective-C API 中指定可空性](https://github.com/teney97/Objective-C-Style-Guide/commit/fd082800a724585f5d77ca1a8e653173c6cc64df)
+* 7.将 Objective-C 构造器标记为 “指定构造器”
+* [8.CToSwiftNameTranslation](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9CCToSwiftNameTranslation.md)
 
 基本规范
 * [1.协议命名](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/基本规范｜协议命名.md)
