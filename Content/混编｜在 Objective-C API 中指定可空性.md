@@ -1,10 +1,12 @@
 ## 混编｜在 Objective-C API 中指定可空性
 
-关键词：nullability annotations、nullable、nonnull、null_resettable、null_unspecified、NS_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_END
+![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1636303863964-b3d0e51e-69f7-44f4-aa60-c703bf4699db.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
+
+关键词：Swift 可选类型、nullability annotations、nullable、nonnull、null_resettable、null_unspecified、NS_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_END
 
 ### 前言
 
-使用 nullability annotations 为 Objective-C API 指定可空性，以控制 Objective-C 声明中的类型如何导入到 Swift 中，让混编更顺利；而且，可以让开发者平滑地从 Objective-C 过渡到 Swift；还可以促使开发者在编写 Objective-C 代码时更加规范，减少同事之间的沟通成本。
+使用 nullability annotations 为 Objective-C API 指定可空性，以控制 Objective-C 声明中的指针类型如何导入到 Swift 中，让混编更安全更顺利；而且，可以让开发者平滑地从 Objective-C 过渡到 Swift；还可以促使开发者在编写 Objective-C 代码时更加规范，减少同事之间的沟通成本。
 
 ### nullability annotations 缘由
 
@@ -20,7 +22,7 @@
 
 Swift 增加了可选（Optional）类型（如 `String?`），用于处理值可能缺失的情况。可选类型表示两种情况：1）有值；2）nil，也就是没有值。一个 non-optional String 写作 `String`，而一个 optional String 写作 `String?`。Swift 是类型安全的，如果你的代码需要一个 `String`，类型安全会阻止你意外传入一个 `String?`。
 
-而 Objective-C 中没有可选类型，NSString 既可以表示这个类型是 optional，也可以表示是 non-optional。这样在混编时就产生了一个问题，Swift 编译器并不知道一个 Objective-C 类型到底是 optional 还是 non-optional。在这种情况下，编译器会隐式地将 Objective-C 的对象类型当成是 `隐式解析可选类型`（例如 `String!`）导入到 Swift 中。
+而 Objective-C 中没有可选类型，`NSString *` 既可以表示这个类型是 optional，也可以表示是 non-optional。这样在混编时就产生了一个问题，Swift 编译器并不知道一个 Objective-C 指针类型到底是 optional 还是 non-optional。在这种情况下，编译器会隐式地将 Objective-C 的指针类型当成是 `隐式解析可选类型`（例如 `String!`）导入到 Swift 中。
 
 ```swift
 // Objective-C Interface
@@ -40,15 +42,16 @@ class MyList : NSObject {
 
 这从而引发出一些问题，比如：
 
-1. 你不能在 Swift 中将一个可选值或 nil 作为参数传递给 item(withName:)，Swift 类型安全会阻止你这么做；你还不能直接强制解析 `!` 可选类型再传入，因为它可能为 nil，`!` 一个为 nil 的可选值会导致运行时错误。所以你需要添加一层保护，判断可选包含一个非 nil 的值再进行 `!`；或者使用 `??` 等手段。总之，一个原本在 Objective-C 中允许传入 nil 的参数，现在在 Swift 中不被允许了！
-2. 由于 Objective-C 的对象类型都被当成是 `隐式解析可选类型`，因此在 Swift 中没办法对它们使用可选绑定了。
-3. 除混编之外，由于 Objective-C 不支持可选类型，我们经常需要对对象做非空判断，以避免发生异常，比如调用一个值为 nil 的 block 将导致 Crash。假如你写了一个方法，你希望调用者传递进来的是一个非空的对象，你却只能通过注释告诉他，而不能通过编译器的能力。这可能还不够，你还需要自己做空值处理，以避免调用者意外地传来一个 nil 导致异常的发生。
+1. 你不能在 Swift 中将一个可选值或 nil 作为参数传递给 item(withName:)，Swift 类型安全会阻止你这么做；你也不能直接强制解析可选类型再传入，因为它可能为 nil，强制解析一个为 nil 的可选值会导致运行时错误。所以你需要添加一层保护，判断可选包含一个非 nil 的值再进行强制解析；或者使用 `??` 等手段。总之，一个原本在 Objective-C 中允许传入 nil 的参数，现在在 Swift 中不被允许了！
+2. 如果在 Swift 中调用 `list.item(withName: name).listItemMethod()` 而 `itemWithName:` 方法返回了一个 nil 的话，将会因为隐式解析一个为 nil 的可选值而得到运行时错误，导致 Crash。
+3. 由于 Objective-C 的指针类型都被当成是 `隐式解析可选类型`，因此在 Swift 中没办法对它们使用可选绑定了。
+4. 除混编之外，由于 Objective-C 不支持可选类型，我们经常需要对对象做非空判断，以避免发生异常，比如调用一个值为 nil 的 block 将导致 Crash。假如你写了一个方法，你希望调用者传递进来的是一个非空的对象，你却只能通过注释告诉他，而不能通过编译器的能力。这可能还不够，你还需要自己做空值处理，以避免调用者意外地传来一个 nil 导致异常的发生。
 
-这些问题都将导致混编进行地不顺利，Objective-C 代码的不规范。因此，Apple 为 Objective-C 引入了 nullability annotations 特性，为 Objective-C API 指定可空性，可以控制 Objective-C 声明中的类型如何导入到 Swift 中（以 optional 还是 non-optional），让混编更顺利。
+这些问题都将导致混编进行地不顺利，Objective-C 代码的不规范。因此，Apple 为 Objective-C 引入了 nullability annotations 特性，为 Objective-C API 指定可空性，可以控制 Objective-C 声明中的指针类型如何导入到 Swift 中（以 optional 还是 non-optional），让混编更顺利。
 
 ### nullability annotations 使用
 
-Apple 于 [Xcode 6.3](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW378) 引入了 nullability annotations 特性 —— 一组可空性限定符，可用于任意指针类型中（包括 Objective-C 指针、C 指针、C++ 成员指针等等）。在混编时，可空性限定符会影响 Objective-C API 导入到 Swift 时的可选性。编译器不再将其作为 `隐式解析可选类型` （如 String!）导入，非空（nonnull）限定类型作为 non-optional（如 String）导入，可空（nullable）限定类型作为 optional（如 String?）导入。
+Apple 于 [Xcode 6.3](https://developer.apple.com/library/archive/releasenotes/DeveloperTools/RN-Xcode/Chapters/Introduction.html#//apple_ref/doc/uid/TP40001051-CH1-SW378) 引入了 nullability annotations 特性 —— 一组可空性限定符，可用于任意指针类型中（包括 Objective-C 指针、C 指针、C++ 成员指针等等）。在混编时，可空性限定符会影响 Objective-C API 导入到 Swift 时的可选性。非空（nonnull）限定类型作为 non-optional（如 String）导入，可空（nullable）限定类型作为 optional（如 String?）导入，而不是被编译器默认作为 `隐式解析可选类型` （如 String!）导入。
 
 ```swift
 // Objective-C Interface
@@ -66,7 +69,7 @@ class MyList: NSObject {
 }
 ```
 
-可空性限定符还可以应用于任意指针类型（包括 C 指针、block 指针、C++ 成员指针等等），使用它的双下划线版本（如 __nullable）。
+以上是可空性限定符的不带下划线的版本（如 `nullable`），它还有双下划线版本（如 `__nullable`），用在 C 指针、C++ 成员指针、Block 返回值与参数类型中。
 
 ```swift
 // C API
@@ -81,16 +84,16 @@ func enumerateStrings(_ callback: (() -> Unmanaged<CFString>)?)
 | -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------ |
 | nullable、_Nullable 、__nullable                         | optional，如 String？         | 该值可以是 nil                                               |
 | nonnull、_Nonnull、__nonnull                             | non-optional，如 String       | 该值永远不会为 nil（除非可能是由于参数中的消息传递为 nil）   |
-| null_unspecified、_Null_unspecified 、__null_unspecified | 隐式解析 optional，如 String! | 不知道值是否可以 nil（非常罕见，除非将其作为过渡工具，否则应避免使用）。使用该限定符的结果和不使用 nullability annotations 的结果是一样的，我觉得该限定符的作用是在过渡时抵消 audited Regions。 |
+| null_unspecified、_Null_unspecified 、__null_unspecified | 隐式解析 optional，如 String! | 不知道值是否可以 nil（非常罕见，除非将其作为过渡工具，否则应避免使用）。使用该限定符的结果和不使用 nullability annotations 特性的结果是一样的，我觉得该限定符的作用是在过渡时抵消 audited Regions。 |
 | null_resettable（只用于属性）                            | 隐式解析 optional，如 String! | 1. 属性的 setter 允许设置 nil 以将值重置为某个默认值，但其 getter 永远不会返回 nil（因为提供了一个默认值）； 2. 必须重写 setter 或 getter 做非空处理。否则会报警告 `Synthesized setter 'setName:' for null_resettable property 'name' does not handle nil` |
 
-> 注意：nullability annotations 不能用于基本数据类型，因为 Objective-C 中
+> 注意：nullability annotations 不能用于非指针类型，因为 Objective-C 中 nil 只能用在引用对象的指针上，而对于基础数据类型如 NSInteger 对于没有值的情况我们一般是使用 NSNotFound。在 [混编｜为 Swift 改进 Objective-C API 声明（NS_REFINED_FOR_SWIFT）](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/混编｜为%20Swift%20改进%20Objective-C%20API%20声明（NS_REFINED_FOR_SWIFT）.md) 有讲解如何在 Swift 中将 Objective-C 的 NSNotFound 改进为 nil 的例子，可以看看。
 
 #### 使用规范
 
-可空性限定符如上提到有 3 个版本（如 `nullable、_Nullable 、__nullable`）。首先弃用双下划线版本（如 `__nullable`）因为 Apple 保留它只是为了与 Xcode 6.3 兼容，搞不好以后哪个版本就去掉了。而 nullable 和 _Nullable 两个版本的区别在于放置位置以及应用场景。对于属性，以及方法返回值和参数是简单对象或 Block 的类型，使用 nullable 版本；其它都使用 _Nullable 版本。
+可空性限定符如上提到有 3 个版本（如 `nullable、_Nullable 、__nullable`）。首先弃用双下划线版本（如 `__nullable`）因为 Apple 保留它只是为了与 Xcode 6.3 兼容，搞不好以后哪个版本就去掉了。而 nullable 和 _Nullable 两个版本的区别在于放置位置以及修饰的指针类型。对于属性，以及方法返回值和参数是简单对象或 Block 的指针类型，使用 nullable 版本；其它都使用 _Nullable 版本。
 
-* 属性，使用 nullable 版本，作为属性关键字。对于该放置开头还是末尾，我看 Apple 的库也没有统一的标准，不过我认为放开头更直观一点，这样开头的关键字不是 nullability 就是原子性。
+* 属性，使用 nullable 版本，作为属性关键字。对于该放置开头还是末尾，我看 Apple 的库也没有统一的标准，不过我认为放开头更直观一点，这样开头的关键字不是可空性就是原子性。
 
 ```objectivec
 // Preferred
@@ -101,7 +104,7 @@ func enumerateStrings(_ callback: (() -> Unmanaged<CFString>)?)
 var name: String?
 ```
 
-* 方法中，返回值和参数是简单对象或 Block 的类型，使用 nullable 版本，写在类型前面
+* 方法中，返回值和参数是简单对象或 Block 的指针类型，使用 nullable 版本，写在类型前面
 
 ```objectivec
 // Preferred
@@ -120,6 +123,8 @@ void block(void (^ _Nullable block)(void));
 ```
 
 * 对于双指针、Block 的返回值、Block 的参数等其它所有支持的类型，不能用 nullable 版本修饰，只能使用 _Nullable 版本，写在类型后面
+
+> 笔者注意到：Block 的返回值和参数类型，如果没有指定可空性的话，默认导入到 Swift 中是可选类型，而不是隐式解析可选类型。
 
 ```objectivec
 - (void)param:(NSString * _Nullable * _Nullable)param;
@@ -154,27 +159,57 @@ NS_ASSUME_NONNULL_END
 
 self.list.name = nil;   // okay
 
-AAPLListItem *matchingItem = [self.list itemWithName:nil];  // warning! :Null passed to a callee that requires a non-null argument
+AAPLListItem *matchingItem = [self.list itemWithName:nil];  // Warning: Null passed to a callee that requires a non-null argument
 ```
 
 为了安全起见，此规则有一些例外：
 
-* `typedef` 类型的的可空性通常依赖于上下文，即使在 audited Regions 中也不能假定它为 nonnull，所以需要明确指定。比如 typedef Block 需要明确指定返回值类型的可空性，否则编译器会给出警告，且将以 optional 类型导入到 Swift 中。
+* `typedef` 类型的可空性通常依赖于上下文，即使在 audited Regions 中也不能假定它为 nonnull。
+
+  我对该规则的理解是：以下 typedef 的 MyListBlock 类型，一般我们不去指定 MyListBlock 类型自身的可空性，而是让它依赖上下文。虽然指不指定都不影响桥接到 Swift 中的结果，为 `typealias MyListBlock = (Any) -> Any?`。但是，如果你指定的话（比如指定为 nullable），那么使用到该类型地方就不能再指定为相反类型了（比如又指定为 nonnull），否则会报 nullability 类型冲突。
 
   ```objectivec
   NS_ASSUME_NONNULL_BEGIN
-    
-  typedef id _Nullable (^ _Nullable MyListBlock)(id); // block 及 block 参数类型会被假定为 nonnull
-  - (void)param:(MyListBlock)block;
-  // 以上等同于
-  typedef id _Nullable (^ MyListBlock)(id);
-  - (void)param:(nullable MyListBlock)block;
-  
+  typedef id _Nullable (^ _Nullable MyListBlock)(id);
+  - (void)param:(nonnull MyListBlock)block; // Error:  'nonnull' conflicts with existing specifier '_Nullable'
   NS_ASSUME_NONNULL_END
   ```
 
-* 对于复杂的指针类型（如 `id *、NSString **`）必须明确指定它的可空性。例如，要指定一个指向 nullable 对象引用的 nonnull 指针，可以使用 `_Nullable id * _Nonnull`；
-* 特殊类型 `NSError **` 经常用于通过方法参数返回错误，因此它总是被假定为是一个指向 nullable 的 NSError 对象引用的nullable 的指针，所以可以不用明确指定。
+  所以我们不去指定 typedef 类型的可空性。而即使我们将它写在 audited Regions 中也不会假定它为 nonnull，所以使用到该类型的地方需要去指定可空性。比如以下 A 类声明中的两个方法中的参数类型的可空性，一个是由 audited Regions 假定为 nonnull，另一个是显式指定为 nullable 的。typedef MyListBlock 类型自身并没有携带可空性，即使它写在了 audited Regions 中。所以在 B 类声明中，由于没有使用 audited Regions，所以编译器给出了警告，说该 block 指针类型缺少可空性限定符，导入到 Swift 中时就成了隐式解析可选类型。
+
+  ```objectivec
+  // C.h
+  NS_ASSUME_NONNULL_BEGIN
+  typedef id _Nullable (^ MyListBlock)(id);
+  NS_ASSUME_NONNULL_END
+    
+  // A.h
+  NS_ASSUME_NONNULL_BEGIN
+  @interface A : NSObject
+  - (void)param:(MyListBlock)block; // 可空性由 audited Regions 假定为 nonnull
+  - (void)param1:(nullable MyListBlock)block; // 可空性显式指定为 nullable
+  @end
+  NS_ASSUME_NONNULL_END
+    
+  // B.h
+  @interface B : NSObject
+  - (void)param:(MyListBlock)block; // Warning: block pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)
+  @end
+  ```
+
+  笔者还注意到一点， typedef Block 的参数类型的可空性可以被 audited Regions 假定为 nonnull。但返回值类型的可空性必须要显式指定，否则编译器会给出警告。前面提到过，Block 的返回值和参数类型，如果没有指定可空性的话，默认导入到 Swift 中是可选类型，而不是隐式解析可选类型。
+
+  ```objectivec
+  // Objective-C interface
+  NS_ASSUME_NONNULL_BEGIN
+  typedef id (^ MyListBlock)(id); // Warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)
+  NS_ASSUME_NONNULL_END
+  // Generated Swift Interface
+  typealias MyListBlock = (Any) -> Any?
+  ```
+
+* 对于复杂的指针类型（如 `id *、NSString **`）必须显式指定它的可空性。例如，要指定一个指向 nullable 对象引用的 nonnull 指针，可以使用 `_Nullable id * _Nonnull`；
+* 特殊类型 `NSError **` 通常用于通过方法参数返回错误，因此 Apple 总是假定它为是一个指向 nullable 的 NSError 对象引用的 nullable 的指针，所以可以不用显式指定。
 
 为了保持一致性，Apple 建议我们在所有 Objective-C headers 中使用 audited Regions。事实上，现在 Xcode 创建的 Objective-C header 默认都包含 audited Regions。同时，尽量避免使用 null_unspecified，除非将其作为过渡工具。
 
@@ -182,10 +217,10 @@ AAPLListItem *matchingItem = [self.list itemWithName:nil];  // warning! :Null pa
 
 Objective-C APIs 还可以使用 null_resettable 来表示属性的 nullability（且只可用于属性），这些属性的 setter 允许设置 nil 以将值重置为某个默认值，但其 getter 永远不会返回 nil（因为提供了一个默认值）。
 
-例如 UIView 的 tintColor 属性，当没有指定一个颜色它将使用一个默认的系统颜色。
+例如 UIView 的 tintColor 属性，当没有指定一个颜色时，它将使用一个默认的系统颜色。
 
 ```objectivec
-@property (nonatomic, strong, null_resettable) UIColor *tintColor;
+@property (null_resettable, nonatomic, strong) UIColor *tintColor;
 ```
 
 此类 API 导入到 Swift 中是 `隐式解析可选类型`。
@@ -196,7 +231,7 @@ var tintColor: UIColor!
 
 使用 null_resettable 必须重写属性的 setter 或 getter 方法做非空处理。否则会报警告 `Synthesized setter 'setName:' for null_resettable property 'name' does not handle nil`。
 
-笔者之前没有在代码中见过 null_resettable，也不明白它到底应该应用在什么场景。直到我遇到了一个需求，我希望我的 String 属性 getter 要么返回一个值，要么返回 ""，而不希望返回 nil，我马上想到了 null_resettable。最后，我在 Swift 中写了一个属性包装器实现了它。
+笔者之前没有在代码中见过 null_resettable，也不明白它到底应该应用在什么场景。直到我遇到了一个需求，我希望我的 String 属性 getter 要么返回一个值，要么返回 `""`，而不希望返回 nil，我马上想到了 null_resettable。最后，我在 Swift 中写了一个属性包装器实现了它。
 
 ```swift
 @propertyWrapper
@@ -210,15 +245,15 @@ struct NonnullString {
 }
 ```
 
-#### 兼容性
+### 兼容性
 
-向 Objective-C API 添加 nullability annotations 不会影响向后兼容性或编译器生成代码的方式。例如，在某些情况下，nonnull 指针仍然可能最终为 nil，比如给 nil 发送消息时。然而，nullability annotations 除了改善 Swift 中编程的体验外，还会在 Objective-C 中提供新的警告（并不会报编译错误，也不会在运行时捕获错误的 nil 传递），例如将一个 nil 实参传递给一个 nonnull 形参，使 Objective-C API 更具表现力且更易于正确使用。在方法实现中，为了向后兼容性，你仍然可以检查 nonnull 形参在运行时实际上是否为 nil。
+向 Objective-C API 添加 nullability annotations 不会影响 Objective-C 代码向后兼容性或编译器生成代码的方式。例如，将 nil 赋值给 nonnull 指针也没有关系，只是在新的编译器下会给出警告，并不会报编译错误，也不会在运行时捕获错误的 nil 传递。为了向后兼容性，你仍然可以检查 nonnull 指针在运行时实际上是否为 nil。
 
-通常，您应该大致按照当前使用断言或异常的方式来看待 nullable 和 nonnull，违反约定是程序员错误。特别是，返回值是你可以控制的，因此你不应该为 nonnull 的返回类型返回 nil，除非它是为了向后兼容。
+你可以以使用断言或异常的方式来看待 nullability annotations，违反约定是程序员的错误。特别是，返回值是你可以控制的，因此如果返回值类型是 nonnull 的，你就不应该返回 nil，除非是为了向后兼容。
 
 ### 小结
 
-如果没有使用 nullability annotations 为 Objective-C API 指定可空性，那么这些 API 在将作为隐式解析可选类型导入到 Swift 中，而不是可选类型或非可选类型，这将给混编带来诸多不便。nullability annotations 除了让混编更顺利，还促使开发者在编写 Objective-C 代码时更加规范，减少同事之间的沟通成本。尽管它在 Xcode 6.3 就引入了，但大部分 Objective-C 开发者还是将它忽略，希望大家能重视起来。
+如果没有使用 nullability annotations 为 Objective-C API 指定可空性，那么 Objective-C 声明中的指针类型将作为隐式解析可选类型导入到 Swift 中，而不是可选类型或非可选类型，这将给混编带来诸多不便，甚至存在安全隐患。nullability annotations 除了让混编更安全更顺利之外，还可以让开发者平滑地从 Objective-C 过渡到 Swift，而且让 Objective-C API 更具表现力且更易于正确使用，促使开发者在编写 Objective-C 代码时更加规范，减少同事之间的沟通成本。尽管它在 Xcode 6.3 就引入了，但大部分 Objective-C 开发者还是将它忽略，希望大家能重视起来。
 
 ### 参考
 
