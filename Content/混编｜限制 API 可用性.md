@@ -1,5 +1,7 @@
 ## 混编｜限制 API 可用性
 
+![iOS 混编｜限制 API 可用性](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc6ff9c635cc46698582b13761e37eca~tplv-k3u1fbpfcp-zoom-crop-mark:1304:1304:1304:734.awebp?)
+
 关键词：NS_SWIFT_UNAVAILABLE、NS_UNAVAILABLE、available
 
 ### Unavailable
