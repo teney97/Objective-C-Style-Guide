@@ -1,4 +1,4 @@
-## 混编｜在 Objective-C API 中指定可空性
+## 混编｜为 Objective-C API 指定可空性
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/12376889/1636303863964-b3d0e51e-69f7-44f4-aa60-c703bf4699db.png?x-oss-process=image%2Fresize%2Cw_750%2Climit_0)
 
