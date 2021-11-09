@@ -74,6 +74,7 @@ class MyList: NSObject {
 ```swift
 // C API
 void enumerateStrings(__nonnull CFStringRef (^ __nullable callback)(void));
+
 // Generated Swift Interface
 func enumerateStrings(_ callback: (() -> Unmanaged<CFString>)?)
 ```
