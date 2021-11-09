@@ -4,6 +4,8 @@
 
 关键词：Swift 可选类型、Objective-C nullability annotations、nullable、nonnull、null_resettable、null_unspecified、NS_ASSUME_NONNULL_BEGIN/NS_ASSUME_NONNULL_END
 
+字数：4100+
+
 ### 前言
 
 使用 nullability annotations 为 Objective-C API 指定可空性，以控制 Objective-C 声明中的指针类型如何导入到 Swift 中，让混编更安全更顺利；而且可以让开发者平滑地从 Objective-C 过渡到 Swift；还让 Objective-C API 更具表现力且更易于正确使用，促使开发者在编写 Objective-C 代码时更加规范，减少同事之间的沟通成本。
@@ -91,7 +93,7 @@ func enumerateStrings(_ callback: (() -> Unmanaged<CFString>)?)
 
 可空性限定符如上提到有 3 个版本（如 `nullable、_Nullable 、__nullable`）。首先弃用双下划线版本（如 `__nullable`）因为 Apple 保留它只是为了与 Xcode 6.3 兼容，搞不好以后哪个版本就去掉了。而 nullable 和 _Nullable 两个版本的区别在于放置位置以及修饰的指针类型。事实上，nullable 版本是 _Nullable 版本的简化形式，任何使用 nullable 版本的地方都可以使用 _Nullable 版本（除了 null_resettable），但优先使用 nullable 版本。对于属性以及方法中返回值和参数是简单对象或 Block 的指针类型，使用 nullable 版本；其它都使用 _Nullable 版本。
 
-* 属性，使用 nullable 版本，作为 “属性关键字”。对于该放置开头还是末尾，我看 Apple 的库也没有统一的标准，不过我认为放开头更直观一点，这样开头的关键字不是可空性就是原子性。
+* 属性，使用 nullable 版本，作为 “属性关键字”。对于该放置开头还是末尾，我看 Apple 的库也没有统一的标准，不过我认为放开头更直观一点。
 
 ```objectivec
 // Preferred
@@ -201,7 +203,7 @@ NS_ASSUME_NONNULL_END
 typedef id (^ MyListBlock0)(id); // Warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)
 NS_ASSUME_NONNULL_BEGIN
 typedef id (^ MyListBlock1)(id); // Warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)
-typedef id _Nonnull (^ MyListBlock2)(id); 
+typedef id _Nonnull (^ MyListBlock2)(id); // okay
 NS_ASSUME_NONNULL_END
 // Generated Swift Interface
 typealias MyListBlock0 = (Any?) -> Any?
@@ -210,7 +212,7 @@ typealias MyListBlock2 = (Any) -> Any
 ```
 
 * 对于复杂的指针类型（如 `id *、NSString **`）必须显式指定它的可空性。例如，要指定一个指向 nullable 对象引用的 nonnull 指针，可以使用 `_Nullable id * _Nonnull`；
-* 特殊类型 `NSError **` 通常用于通过方法参数返回错误，因此 Apple 总是假定它为是一个指向 nullable 的 NSError 对象引用的 nullable 的指针，所以可以不用显式指定。
+* 特殊类型 `NSError **` 通常用于通过方法参数返回错误，Apple 总是假定它为是一个指向 nullable 的 NSError 对象引用的 nullable 的指针，所以可以不用显式指定。
 
 为了保持一致性，Apple 建议我们在所有 Objective-C headers 中使用 audited Regions，同时这样也能保证混编的安全，即便你不去指定 nullable，因为导入到 Swift 中不再是隐式解析可选类型了。事实上，现在 Xcode 创建的 Objective-C header 默认都包含 audited Regions，你可以为所有旧的头文件中都添加 audited Regions 以先保证混编安全。同时，尽量避免使用 null_unspecified，除非将其作为过渡工具。
 
@@ -234,17 +236,40 @@ var tintColor: UIColor!
 
 使用 null_resettable 必须重写属性的 setter 或 getter 方法做非空处理。否则会报警告 `Synthesized setter 'setName:' for null_resettable property 'name' does not handle nil`，同时存在安全隐患。
 
-笔者之前没有在代码中见过 null_resettable，也不明白它到底应该应用在什么场景。直到我遇到了一个需求，我希望我的 Optional String 属性 getter 要么返回一个值，要么返回 `""`，而不希望返回 nil，我马上想到了 null_resettable。最后，我在 Swift 中写了一个属性包装器实现了它。
+笔者之前没有在代码中见过 null_resettable，也不明白它到底应该应用在什么场景。直到我遇到了一个需求，我希望我的 Optional String 属性 getter 要么返回一个值，要么返回 `""`，而不希望返回 nil，null_resettable 的作用与这相符。最后，我在 Swift 中写了一个属性包装器实现了它。
 
 ```swift
 @propertyWrapper
 struct NonnullString {
-    private var string: String!
+    private var string: String
     init() { self.string = "" }
     var wrappedValue: String! {
         get { return string }
         set { string = newValue ?? "" }
     }
+}
+
+// 泛型版本
+protocol NonnullValueProtocol {
+    init()
+}
+
+@propertyWrapper
+struct NonnullValue<T: NonnullValueProtocol> {
+    private var value: T
+    init() { value = T() }
+    var wrappedValue: T! {
+        get { return value }
+        set { value = newValue ?? T() }
+    }
+}
+
+extension String: NonnullValueProtocol {}
+extension Array: NonnullValueProtocol {}
+
+class MyClass: NSObject {
+    @NonnullValue<String> var string: String!
+    @NonnullValue<Array<String>> var array: Array<String>!
 }
 ```
 
