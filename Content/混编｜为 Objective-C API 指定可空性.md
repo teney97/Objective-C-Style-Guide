@@ -242,7 +242,7 @@ var tintColor: UIColor!
 @propertyWrapper
 struct NonnullString {
     private var string: String
-    init() { self.string = "" }
+    init() { string = "" }
     var wrappedValue: String! {
         get { return string }
         set { string = newValue ?? "" }
