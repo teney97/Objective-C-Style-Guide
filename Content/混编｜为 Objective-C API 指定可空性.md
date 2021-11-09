@@ -100,6 +100,7 @@ func enumerateStrings(_ callback: (() -> Unmanaged<CFString>)?)
 @property (nullable, nonatomic, copy) NSString *name;
 // Not Preferred
 @property (nonatomic, copy) NSString * _Nullable name;
+
 // Generated Swift Interface
 var name: String?
 ```
@@ -112,6 +113,7 @@ var name: String?
 // Not Preferred
 - (MyListItem * _Nullable)itemWithName:(NSString * _Nonnull)name block:(void (^ _Nullable)(void))block;
 // 你可能会在 Apple 库中看到很多 block:(void (^ __nonnull)(void))block 的写法，那都是旧代码
+
 // Generated Swift Interface
 func item(withName name: String, block: (() -> Void)? = nil) -> MyListItem?
 ```
@@ -133,6 +135,7 @@ void block(void (^ _Nullable block)(void));
 
 ```objectivec
 - (void)block:(nullable id _Nonnull (^)(id _Nullable params))block;
+
 // Generated Swift Interface
 func block(_ block: ((Any?) -> Any)? = nil)
 ```
@@ -205,6 +208,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef id (^ MyListBlock1)(id); // Warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified)
 typedef id _Nonnull (^ MyListBlock2)(id); // okay
 NS_ASSUME_NONNULL_END
+  
 // Generated Swift Interface
 typealias MyListBlock0 = (Any?) -> Any?
 typealias MyListBlock1 = (Any) -> Any?
