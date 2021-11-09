@@ -267,7 +267,7 @@ struct NonnullValue<T: NonnullValueProtocol> {
 extension String: NonnullValueProtocol {}
 extension Array: NonnullValueProtocol {}
 
-class MyClass: NSObject {
+class MyClass {
     @NonnullValue<String> var string: String!
     @NonnullValue<Array<String>> var array: Array<String>!
 }
