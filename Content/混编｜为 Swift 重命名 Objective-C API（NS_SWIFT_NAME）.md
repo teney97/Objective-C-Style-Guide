@@ -73,7 +73,7 @@ enum DisplayMode : Int {
 @end
   
 // Generated Swift Interface
-class MyController {
+class MyController: UIViewController {
     convenience init(URLKind kind: URLKind)
 }
 ```
