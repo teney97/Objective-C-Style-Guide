@@ -24,6 +24,22 @@ Swift 和 Objective-C 的 API 命名规范有些不同，例如：
 * 类、协议（宏用作前缀）
 * 枚举、属性、方法或函数、类型别名等其它所有类型（宏用作后缀）
 
+#### Example（Apple - Xcode Release Notes - Xcode 7）
+
+##### 将 Objective-C 工厂方法作为构造器导入到 Swift
+
+```objectivec
+// Objective-C Interface
+@interface MyController : UIViewController
++ (instancetype)standardControllerForURLKind:(URLKind)kind NS_SWIFT_NAME(init(URLKind:));
+@end
+  
+// Generated Swift Interface
+class MyController {
+    convenience init(URLKind kind: URLKind)
+}
+```
+
 #### Example（Apple - Renaming Objective-C APIs for Swift）
 
 ##### 重命名 Objective-C 类、属性
