@@ -26,6 +26,44 @@ Swift 和 Objective-C 的 API 命名规范有些不同，例如：
 
 #### Example（Apple - Xcode Release Notes - Xcode 7）
 
+##### 重命名枚举的 case
+
+正常来说，以下 Objective-C 枚举导入到 Swift 中时，会去掉完整前缀 `DisplayMode`。但 DisplayMode256Color 去掉该前缀后就是以数字开头了，这是不允许的。因此编译器会为所有 case 保留枚举类型名称的最后一个单词，改正 DisplayMode256Color 在 Swift 中的名称的同时，保持所有 case 命名的一致性，这里就是保留 `mode`。
+
+```objectivec
+// Objective-C Interface
+typedef NS_ENUM(NSInteger, DisplayMode) {
+    DisplayMode256Color,
+    DisplayModeThousandsOfColors,
+    DisplayModeMillionsOfColors
+};
+
+// Generated Swift Interface
+enum DisplayMode : Int {
+    case mode256Colors = 0
+    case modeThousandsOfColors = 1
+    case modeMillionsOfColors = 2
+}
+```
+
+我们可以针对 DisplayMode256Color case 做下优化，使用 `NS_SWIFT_NAME` 宏为其在 Swift 中重命名，不以数字开头。这样所有 case 在导入到 Swift 中时，都会去掉完整的前缀 `DisplayMode` 了。
+
+```objectivec
+// Objective-C Interface
+typedef NS_ENUM(NSInteger, DisplayMode) {
+    DisplayMode256Colors NS_SWIFT_NAME(with256Colors),
+    DisplayModeThousandsOfColors,
+    DisplayModeMillionsOfColors,
+};
+
+// Generated Swift Interface
+enum DisplayMode : Int {
+    case with256Colors = 0
+    case thousandsOfColors = 1
+    case millionsOfColors = 2
+}
+```
+
 ##### 将 Objective-C 工厂方法作为构造器导入到 Swift
 
 ```objectivec
