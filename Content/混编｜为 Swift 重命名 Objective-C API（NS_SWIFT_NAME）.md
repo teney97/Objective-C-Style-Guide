@@ -66,6 +66,8 @@ enum DisplayMode : Int {
 
 ##### 将 Objective-C 工厂方法作为构造器导入到 Swift
 
+以下工厂方法的命名不满足自动转换为构造器导入到 Swift 的约定，需要以 `controller` 开头比如命名为 `controllerForURLKind:` 才行。不过我们可以通过 `NS_SWIFT_NAME` 将其作为构造器导入到 Swift。
+
 ```objectivec
 // Objective-C Interface
 @interface MyController : UIViewController
