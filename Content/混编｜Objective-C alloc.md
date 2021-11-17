@@ -1,6 +1,6 @@
 ## 混编｜Objective-C alloc
 
-在 Swift 中 alloc 方法被禁用。
+在 Swift 中 alloc 方法被禁用，alloc 和 init 自动合并了，内部会处理内存分配。
 
 ```objectivec
 // NSObject
@@ -21,7 +21,7 @@
 
 @implementation DefaultLoadingView
 + (instancetype)new {  
-    return [self alloc];
+    return [[self alloc] init];
 }
 + (instancetype)alloc {
     if ([self respondsToSelector:@selector(defaultLoadingViewClass4Sub)]) {
