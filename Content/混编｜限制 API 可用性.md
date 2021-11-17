@@ -19,6 +19,12 @@
 NS_SWIFT_UNAVAILABLE("Use a dictionary literal instead.");
 ```
 
+在 Apple 库里也有看到使用 `OBJC_SWIFT_UNAVAILABLE` 宏的，用法同 `NS_SWIFT_UNAVAILABLE`。
+
+```objectivec
++ (instancetype)alloc OBJC_SWIFT_UNAVAILABLE("use object initializers instead");
+```
+
 #### NS_UNAVAILABLE
 
 如果要让 Objective-C API 在  Objective-C 和 Swift 中都不可用，可以使用 `NS_UNAVAILABLE` 宏，但它不支持自定义的错误信息。
