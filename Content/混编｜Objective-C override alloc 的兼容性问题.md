@@ -49,7 +49,7 @@
 
 ### 解决方案
 
-1、如果要继续保留采用 alloc 方案的话，就在 Objective-C 中包个中间层。比如这里我们可以新增一个工厂方法来调用 alloc 和构造器方法，然后使用 `NS_SWIFT_NAME` 重命名该工厂方法使其作为构造器导入到 Swift 中以方便使用，同时使用 `NS_SWIFT_UNAVAILABLE` 将原先的构造器方法标记标记为在 Swift 中不可用且指示调用者使用新的构造器方法。
+1、如果要继续保留采用 alloc 方案的话，就在 Objective-C 中包个中间层。比如这里我们可以新增一个工厂方法来调用 alloc 和构造器方法，然后使用 `NS_SWIFT_NAME` 重命名该工厂方法使其作为构造器导入到 Swift 中以方便使用，同时使用 `NS_SWIFT_UNAVAILABLE` 将原先的构造器方法标记为在 Swift 中不可用且指示调用者使用新的构造器方法。
 
 ```objectivec
 @interface DefaultLoadingView : UIView <LoadingViewProtocol>
