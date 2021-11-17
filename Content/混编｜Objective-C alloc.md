@@ -20,9 +20,6 @@
 @end
 
 @implementation DefaultLoadingView
-+ (instancetype)new {  
-    return [[self alloc] init];
-}
 + (instancetype)alloc {
     if ([self respondsToSelector:@selector(defaultLoadingViewClass4Sub)]) {
         Class tempClass = [self defaultLoadingViewClass4Sub];
@@ -36,6 +33,14 @@
 ```
 
 业务方可以通过实现 DefaultLoadingView+sub 分类来自定义 loadingView。
+
+```objectivec
+@implementation DefaultLoadingView (sub)
++ (Class)defaultLoadingViewClass4Sub {
+    return CustomLoadingView.class;
+}
+@end
+```
 
 如果在 Swift 中实例化 DefaultLoadingView 的话，将都是 DefaultLoadingView 类型。
 
