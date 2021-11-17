@@ -4,7 +4,7 @@
 
 ### 问题
 
-在 Swift 中 alloc 方法被禁用了，而且在 Swift 中实例化 Objective-C，也不会调用 alloc 方法，也是直接调用构造器方法。
+在 Swift 中 alloc 方法被禁用，alloc 和 init 自动合并了，内部会处理内存分配。而且在 Swift 中实例化 Objective-C，也不会调用 alloc 方法，也是直接调用构造器方法。
 
 ```objectivec
 + (instancetype)alloc OBJC_SWIFT_UNAVAILABLE("use object initializers instead");
