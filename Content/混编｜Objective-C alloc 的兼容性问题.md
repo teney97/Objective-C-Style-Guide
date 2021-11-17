@@ -1,4 +1,4 @@
-## 混编｜Objective-C alloc
+## 混编｜Objective-C alloc 的兼容性问题
 
 在 Swift 中 alloc 方法被禁用，alloc 和 init 自动合并了，内部会处理内存分配。
 
@@ -44,7 +44,7 @@
 
 如果在 Swift 中实例化 DefaultLoadingView 的话，将都是 DefaultLoadingView 类型。
 
-解决方案：
+解决方案（本质上都是对 [Class alloc] init] 包一层）：
 
 1、通过协议工厂，同时兼容旧代码
 
@@ -61,7 +61,7 @@
 }
 @end
   
-// 使用的时候通过协议工厂创建
+// 使用的时候通过协议工厂创建，ServiceFactory 是 OC 类，内部也是调用 [Class alloc] init]
 let loadingView = ServiceFactory.createService(LoadingViewProtocol.self, initBlock: nil) as! UIView & LoadingViewProtocol
 ```
 
