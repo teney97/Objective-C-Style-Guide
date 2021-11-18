@@ -323,6 +323,39 @@ extension SKFuel.Kind {
 extension SKFuel.Kinds: CustomStringConvertible {}
 ```
 
+### NS_SWIFT_NAME 无法使用的场景
+
+除了以上提到的问题：即使我们将全局函数转变为了实例属性 description，但你无法使用 `NS_SWIFT_NAME` 来让类型遵守 CustomStringConvertible 协议。
+
+笔者在实践过程中还遇到了一个 `NS_SWIFT_NAME` 无法使用的场景：在 Objective-C 协议中将工厂方法转变为构造器导入到 Swift 中。在 Objective-C 协议中尝试转变为构造器的工厂方法，在 Generated Swift Interface 中不会生成，而且使用会报错 `Argument passed to call that takes no arguments`，奇怪的地方是调用的时候编译器明明给出了代码补全提示却不让用。
+
+```objectivec
+@protocol iAnimationView <NSObject>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type NS_SWIFT_NAME(init(named:type:));
+@end
+  
+@interface AnimationView : UIView<iAnimationView>
+@end
+  
+// Use it in Swift
+let view = AnimationView(named: name, type: type, bundle: bundle) // Error: Argument passed to call that takes no arguments
+```
+
+解决方案就是将尝试转变为构造器的工厂方法在类的声明中再写一遍：
+
+```objectivec
+@protocol iAnimationView <NSObject>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type;
+@end
+  
+@interface AnimationView : UIView<iAnimationView>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type NS_SWIFT_NAME(init(named:type:));
+@end
+  
+// Use it in Swift
+let view = AnimationView(named: name, type: type, bundle: bundle) // Okay
+```
+
 ### Extension：为 Objective-C 重命名 Swift API
 
 我们可以在 projectName-Swift.h 文件中查看编译器为 Swift Interface 生成的 Objective-C Interface，编译器也会根据一些规则为 Objective-C 重命名 Swift API，通常这个结果也还不错，但有时候还是存在优化空间的，这时候我们也可以自定义重命名 Swift API。
