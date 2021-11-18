@@ -43,9 +43,9 @@
 @end
 ```
 
-在 Objective-C 中我们可以直接通过 `[[DefaultLoadingView alloc] init]` 来获取 loadingView 实例，如果业务方有自定义的那获取到的就是 CustomLoadingView 类型，否则就是 DefaultLoadingView 类型。
+在 Objective-C 中我们可以直接通过 `[[DefaultLoadingView alloc] init]` 来创建 loadingView 实例，如果业务方有自定义的那创建的就是 CustomLoadingView 类型，否则就是 DefaultLoadingView 类型。
 
-但在 Swift 中通过 `DefaultLoadingView()` 获取实例的话，都将是 DefaultLoadingView 类型，因为它不会调用 alloc 方法。
+但在 Swift 中通过 `DefaultLoadingView()` 创建实例的话，都将是 DefaultLoadingView 类型，因为它不会调用 alloc 方法。
 
 ### 解决方案
 
