@@ -80,6 +80,36 @@ class MyController: UIViewController {
 }
 ```
 
+笔者在实践过程中发现，`NS_SWIFT_NAME` 无法用于在 Objective-C 协议中将工厂方法转变为构造器导入到 Swift 中。在 Objective-C 协议中尝试转变为构造器的工厂方法，在 Generated Swift Interface 中不会生成，而且使用会报错 `Argument passed to call that takes no arguments`，奇怪的地方是调用的时候编译器明明给出了代码补全提示却不让用。
+
+```objectivec
+@protocol iAnimationView <NSObject>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type NS_SWIFT_NAME(init(named:type:));
+@end
+
+@interface AnimationView : UIView<iAnimationView>
+@end
+
+// Use it in Swift
+let view = AnimationView(named: name, type: type, bundle: bundle) // Error: Argument passed to call that takes no arguments
+```
+
+解决方案就是将尝试转变为构造器的工厂方法在类的声明中再写一遍：
+
+
+```objectivec
+@protocol iAnimationView <NSObject>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type NS_SWIFT_NAME(init(named:type:));
+@end
+
+@interface AnimationView : UIView<iAnimationView>
++ (instancetype)animationNamed:(NSString *)animationName type:(AnimationType)type NS_SWIFT_NAME(init(named:type:));
+@end
+
+// Use it in Swift
+let view = AnimationView(named: name, type: type, bundle: bundle) // Okay
+```
+
 #### Example（Apple - Renaming Objective-C APIs for Swift）
 
 ##### 重命名 Objective-C 类、属性
@@ -275,7 +305,7 @@ extension SKFuel.Kind {
 }
 ```
 
-接着，我们还可以将其转变为 `实例⽅法`，做法是把其中实例类型参数的参数标签改为 self，这样一来 Swift 也就知道在原全局函数的哪里传入当前实例。例如这里就是将 from 改为 self：
+接着，我们还可以将其转变为 `实例⽅法`，做法是把其中 `实例类型参数的参数标签` 改为 self，这样一来 Swift 也就知道在原全局函数的哪里传入当前实例。例如这里就是将 from 改为 self：
 
 ```objectivec
 // Declare in Objective-C
@@ -286,18 +316,6 @@ extension SKFuel.Kind {
     public func string() -> String
 }
 ```
-
-> 这里再写个 Demo 进一步解释一下，把其中实例类型参数的参数标签改为 self，这样一来 Swift 也就知道在原全局函数的哪里传入当前实例。
->
-> ```objectivec
-> // Declare in Objective-C
-> NSString *SKFuelKindToString(NSArray *, SKFuelKind, NSString *) NS_SWIFT_NAME(SKFuelKind.string(array:self:string:));
-> 
-> // Generated Swift Interface
-> extension SKFuel.Kind {
->     public func string(array _: [Any], string _: String) -> String
-> }
-> ```
 
 然后，我们还可以将这个⽅法转变为⼀个 `实例属性`，只需要在前⾯添加 `getter:`，setter 同理。以下 description 是指定的属性名称。
 
@@ -388,6 +406,14 @@ let view = AnimationView(named: name, type: type, bundle: bundle) // Okay
 ### 小结
 
 Swift 和 Objective-C 的 API 命名规范有些不同，在混编时，虽然编译器会根据一些规则重命名 Objective-C 与 Swift API 且通常结果还不错，但这毕竟是计算机的审美结果，有时会不尽如人意。本篇文章讲解了如何自定义重命名 Objective-C 与 Swift API，掌握它们就可以人为地优化重命名的 API，提升混编体验。
+
+最后我们再来回顾下，Apple 给的示例中 `NS_SWIFT_NAME` 的应用场景：
+
+* 重命名与 Swift 风格不符的 API，使其在 Swift 中有合适的名称；
+* 将与类 A 相关联的类 B 或者枚举 C 作为内部类或枚举附属于类 A；
+* 重命名 “命名去掉完整前缀后以数字开头的” 枚举的 case，改善所有 case 导入到 Swift 中的命名；
+* 重命名 “命名不满足自动转换为构造器导入到 Swift 中的约定的” 工厂方法，使其作为构造器导入到 Swift 中（不能用于协议中）；
+* 在处理全局常量、变量，特别是在处理全局函数时，它的能力更加强大，能够极大程度地改变 API。比如可以将 `全局函数` 转变为 `静态方法`，或是 `实例⽅法`，甚至是 `实例属性`。如果你在 Objective-C 和 Swift 里都用过 Core Graphics 的话，你会深有体会。Apple 称其把 `NS_SWIFT_NAME` 用在了数百个全局函数上，将它们转换为方法、属性和构造器，以更加方便地在 Swift 中使用。
 
 ### 参考
 
