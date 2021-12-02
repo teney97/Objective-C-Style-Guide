@@ -35,7 +35,7 @@ NSString *subtitle = dict[DCDictionaryKeySubtitle];
 NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 ```
 
-这在混编时，在 Swift 中的使用方式为：
+混编时，在 Swift 中的使用方式为：
 
 ```swift
 // Objective-C 的常量被自动转换成 Swift 常量
