@@ -19,7 +19,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 
 ### 优雅地声明类型常量枚举
 
-在 Objective-C 中，我们经常会使用 NSString 类型常量来当作 NSDictionary 的 key、NSUserDefaults 的 key、notificationName 等等。例如：
+在 Objective-C 中，我们经常会使用 NSString 类型常量来当作 NSDictionary 的 key，例如：
 
 ```objectivec
 // Dicitonary keys
@@ -38,19 +38,19 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 这在混编时，在 Swift 中的使用方式为：
 
 ```swift
-// Objective-C 的常数被自动转换成 Swift 常量
-public let DCDictionaryKeyTitle    : String
-public let DCDictionaryKeySubtitle : String
-public let DCDictionaryKeyCount    : String
+// Objective-C 的常量被自动转换成 Swift 常量
+let DCDictionaryKeyTitle    : String
+let DCDictionaryKeySubtitle : String
+let DCDictionaryKeyCount    : String
 
 // 使用
 let dict:[String : Any] = [DCDictionaryKeyTitle    : "a title",
                            DCDictionaryKeySubtitle : "a subTitle",
                            DCDictionaryKeyCount    : 66]
 
-let title    = dict[DCDictionaryKeyTitle]    as! String 
-let subtitle = dict[DCDictionaryKeySubtitle] as! String 
-let count    = dict[DCDictionaryKeyCount]    as! Int
+let title    = dict[DCDictionaryKeyTitle]    as? String 
+let subtitle = dict[DCDictionaryKeySubtitle] as? String 
+let count    = dict[DCDictionaryKeyCount]    as? Int
 ```
 
 > 你可以查看编译器为 Objective-C 接口生成的 Swift 接口，参考：[查看编译器为 Objective-C 接口生成的 Swift 接口](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E6%B7%B7%E7%BC%96%EF%BD%9C%E6%9F%A5%E7%9C%8B%E7%BC%96%E8%AF%91%E5%99%A8%E4%B8%BA%20Objective-C%20%E6%8E%A5%E5%8F%A3%E7%94%9F%E6%88%90%E7%9A%84%20Swift%20%E6%8E%A5%E5%8F%A3.md)
@@ -82,14 +82,14 @@ NSInteger count    = [dict[DCDictionaryKeyCount] integerValue];
 在 OC 中使用起来没多大变化，但在 Swift 中可就不一样了，真够 Swift！
 
 ```swift
-// Objective-C 的常数被自动转换成 Swift Struct
-public struct DCDictionaryKey : Hashable, Equatable, RawRepresentable {
-    public init(rawValue: String)
+// Objective-C 的常量被自动转换成 Swift Struct
+struct DCDictionaryKey : Hashable, Equatable, RawRepresentable {
+    init(rawValue: String)
 }
 extension DCDictionaryKey {
-    public static let title    : DCDictionaryKey
-    public static let subtitle : DCDictionaryKey
-    public static let count    : DCDictionaryKey
+    static let title    : DCDictionaryKey
+    static let subtitle : DCDictionaryKey
+    static let count    : DCDictionaryKey
 }
 
 // 使用
@@ -97,12 +97,12 @@ let dict:[DCDictionaryKey : Any] = [.title    : "a title",
                                     .subtitle : "a subTitle",
                                     .count    : 66]
 
-let title    = dict[.title]    as! String
-let subtitle = dict[.subtitle] as! String
-let count    = dict[.count]    as! Int
+let title    = dict[.title]    as? String
+let subtitle = dict[.subtitle] as? String
+let count    = dict[.count]    as? Int
 
 // 这时候如果我们之间使用字符串 "title" 当作 key 的话，编译器会报错
-let title    = dict["title"]   as! String // Error: Cannot convert value of type 'String' to expected argument type 'DCDictionaryKey'. Replace '"title"' with 'DCDictionaryKey(rawValue: "title") ?? <#default value#>
+let title    = dict["title"]   as? String // Error: Cannot convert value of type 'String' to expected argument type 'DCDictionaryKey'. Replace '"title"' with 'DCDictionaryKey(rawValue: "title") ?? <#default value#>
 ```
 
 Foundation 库的 NSNotificationName、NSRunLoopMode 等，或者 SDWebImage 的 SDWebImageContextOption 就是这样处理的。
@@ -120,13 +120,13 @@ UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotificatio
 
 * NS_ENUM：用于简单的枚举
 * NS_CLOSED_ENUM：用于不会变更枚举成员的简单的枚举（简称 “冻结枚举” ）
-* NS_OPTIONS：用于可选类型枚举
+* NS_OPTIONS：用于选项枚举
 * NS_TYPED_ENUM：用于类型常量枚举
 * NS_TYPED_EXTENSIBLE_ENUM：用于可扩展的类型常量枚举
 
 #### NS_ENUM
 
-用于声明简单的枚举，这个大家都很熟悉了。
+用于声明简单的枚举，这个大家都很熟悉了，将作为 `enum` 导入到 Swift 中。。
 
 ```objectivec
 // Declare in Objective-C
@@ -138,7 +138,7 @@ typedef NS_ENUM(NSInteger, UITableViewCellStyle) {
 };
 
 // In Swift, the UITableViewCellStyle enumeration is imported like this:
-public enum UITableViewCellStyle : Int {
+enum UITableViewCellStyle : Int {
     case `default` = 0
     case value1 = 1
     case value2 = 2
@@ -149,7 +149,7 @@ public enum UITableViewCellStyle : Int {
 let style = UITableViewCellStyle.default
 ```
 
-这个知识点看似没用，实则大大有用。在 Objective-C 中，除了使用 NS_ENUM 宏，还可以像如下等方式定义枚举。它或许是你或同事的编码习惯，又或许是历史遗留的代码。虽然这样的写法并没有错，但 Generated Swift Interface 却不尽如人意，导致在 Swift 中使用时只能使用原始的完整的枚举名称。
+这个知识点看似没用，实则大大有用。在 Objective-C 中，除了使用 NS_ENUM 宏，还可以像如下等方式声明枚举。它或许是你或同事的编码习惯，又或许是历史遗留的代码。虽然这样的写法并没有错，但 Generated Swift Interface 却不尽如人意，导致在 Swift 中使用时只能使用原始的完整的枚举名称。
 
 ```objectivec
 // Declare in Objective-C
@@ -161,10 +161,10 @@ typedef enum: NSUInteger {
 } UITableViewCellStyle;
 
 // Generated Swift Interface
-public struct UITableViewCellStyle : Equatable, RawRepresentable {
-    public init(_ rawValue: UInt)
-    public init(rawValue: UInt)
-    public var rawValue: UInt
+struct UITableViewCellStyle : Equatable, RawRepresentable {
+    init(_ rawValue: UInt)
+    init(rawValue: UInt)
+    var rawValue: UInt
 }
 
 // Use it in Swift
@@ -175,7 +175,7 @@ let style = UITableViewCellStyleDefault
 
 #### NS_CLOSED_ENUM
 
-用于声明不会变更枚举成员的简单的枚举（简称 “冻结枚举” ），对应 Swift 中的 `@frozen` 关键字。冻结枚举对于希望在 switch 语句中匹配有限状态集的时候非常有用，这个有限状态集是一个完整的集合，覆盖了所有情况，将来不会再有其他新的情况。
+用于声明不会变更枚举成员的简单的枚举（简称 “冻结枚举” ），对应 Swift 中的 `@frozen` 关键字，将作为 `@frozen enum` 导入到 Swift 中。冻结枚举对于希望在 switch 语句中匹配有限状态集的时候非常有用，这个有限状态集是一个完整的集合，覆盖了所有情况，将来不会再有其他新的情况。
 
 例如，NSComparisonResult 枚举用于指定如何排序，在两个数比大小时，无非就 <、=、> 三种情况，所以非常适合使用冻结枚举。
 
@@ -188,7 +188,7 @@ typedef NS_CLOSED_ENUM(NSInteger, NSComparisonResult) {
 };
 
 // In Swift, the NSComparisonResult enumeration is imported like this:
-@frozen public enum NSComparisonResult : Int {
+@frozen enum NSComparisonResult : Int {
     case orderedAscending = -1
     case orderedSame = 0
     case orderedDescending = 1
@@ -218,7 +218,7 @@ typedef NS_CLOSED_ENUM(NSInteger, NSComparisonResult) {
 
 #### NS_OPTIONS
 
-用于声明可选类型枚举，这个大家也都很熟悉了。需要注意的地方在上文 **NS_ENUM** 中已经提到了，尽量使用 NS_OPTIONS 来定义选项枚举。
+用于声明选项枚举，这个大家也都很熟悉了，将作为 `struct` 导入到 Swift 中。需要注意的地方在上文 **NS_ENUM** 中已经提到了，尽量使用 NS_OPTIONS 来声明选项枚举。
 
 ```objectivec
 // Declare in Objective-C
@@ -250,9 +250,9 @@ let style = UIViewAutoresizing([.flexibleWidth, .flexibleHeight])
 
 #### NS_TYPED_ENUM
 
-用于声明类型常量枚举，不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
+用于声明类型常量枚举，将作为 `struct` 导入到 Swift 中，可大大改善 Objective-C 类型常量在 Swift 中的使用方式。它不局限于字符串类型常量，NS_STRING_ENUM 可以用它替代。
 
-可以使用 typedef 对类型常量进行分组，并指定一个类型（如下 TrafficLightColor），然后在后面添加上宏 NS_TYPED_ENUM。
+用法是使用 typedef 对类型常量进行分组，并指定一个类型（如下 TrafficLightColor），然后在后面添加上宏 NS_TYPED_ENUM。
 
 >使用 NS_STRING_ENUM 宏，在逻辑上你不能在 Swift 中使用 extension 扩展新的常量集，虽然这是允许的。如果你需要做此支持，请使用 NS_TYPED_EXTENSIBLE_ENUM。
 
@@ -265,13 +265,13 @@ FOUNDATION_EXTERN TrafficLightColor const TrafficLightColorYellow;
 FOUNDATION_EXTERN TrafficLightColor const TrafficLightColorGreen;
 
 // In Swift, the TrafficLightColor type is imported like this:
-public struct TrafficLightColor : Hashable, Equatable, RawRepresentable {
-    public init(rawValue: Int)
+struct TrafficLightColor : Hashable, Equatable, RawRepresentable {
+    init(rawValue: Int)
 }
 extension TrafficLightColor {
-    public static let red: TrafficLightColor
-    public static let yellow: TrafficLightColor
-    public static let green: TrafficLightColor
+    static let red: TrafficLightColor
+    static let yellow: TrafficLightColor
+    static let green: TrafficLightColor
 }
 
 // Use it in Swift
@@ -280,7 +280,7 @@ let color = TrafficLightColor.red
 
 #### NS_TYPED_EXTENSIBLE_ENUM
 
-用于声明可扩展的类型常量枚举。在导入到 Swift 中时，它生成的 Struct 与 NS_TYPED_ENUM 生成的 Struct 的区别在于多了一个初始化器。
+用于声明可扩展的类型常量枚举。与 NS_TYPED_ENUM 的区别是生成的 `struct` 多了一个忽略参数标签的构造器。
 
 ```swift
 // declared
@@ -288,12 +288,12 @@ typedef long FavoriteColor NS_TYPED_EXTENSIBLE_ENUM;
 FOUNDATION_EXTERN FavoriteColor const FavoriteColorBlue;
 
 // imported
-public struct FavoriteColor : Hashable, Equatable, RawRepresentable {
-    public init(_ rawValue: Int)
-    public init(rawValue: Int)
+struct FavoriteColor : Hashable, Equatable, RawRepresentable {
+    init(_ rawValue: Int)
+    init(rawValue: Int)
 }
 extension FavoriteColor {
-    public static let blue: FavoriteColor
+    static let blue: FavoriteColor
 }
 
 // extended
@@ -321,7 +321,7 @@ extension FavoriteColor {
 
 ### 小结
 
-通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。使用 `NS_ENUM` 和 `NS_OPTIONS` 来声明简单枚举和选项枚举，以优化 Swift 编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举，这在混编时在 Swift 中使用起来更简洁优雅更符合 Swift 的使用习惯。 
+通过阅读本文，你是否对 Objective-C 的枚举宏有了进一步的了解呢？用好它们以改善在混编时在 Swift 中的编程体验。使用 `NS_ENUM` 和 `NS_OPTIONS` 来声明简单枚举和选项枚举，以优化 Swift 编程体验。`NS_CLOSED_ENUM` 用于声明不会变更枚举成员的冻结枚举，对应 Swift 中的 `@frozen` 关键字，以降低灵活性的代价，换取了性能上的提升。`NS_STRING_ENUM/NS_EXTENSIBLE_STRING_ENUM`、`NS_TYPED_ENUM/NS_TYPED_EXTENSIBLE_ENUM` 用于声明字符串常量/类型常量枚举（建议统一使用前者，弃用后者），这在混编时在 Swift 中使用起来更简洁优雅更符合 Swift 的使用习惯。 
 
 ### 参考
 
