@@ -15,7 +15,7 @@ UIKIT_EXTERN NSNotificationName const UIApplicationWillEnterForegroundNotificati
 UIKIT_EXTERN NSNotificationName const UIApplicationDidFinishLaunchingNotification;
 ```
 
-> 在 Xcode 13 中，Apple 已经将其改为使用 `NS_TYPED_EXTENSIBLE_ENUM` 修饰。
+> 在 Xcode 13 中，Apple 已经将其改为使用 `NS_TYPED_EXTENSIBLE_ENUM` 声明。
 
 ### 优雅地声明类型常量枚举
 
