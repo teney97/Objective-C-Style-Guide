@@ -49,7 +49,7 @@ if 语句
 头文件
 * [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜在类的头文件中尽量少引入其他头文件.md)
 * [2.头文件引入整理](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜头文件引入整理.md)
-* [3.头文件｜向子类或分类提供父类（宿主类）的私有 API](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜向子类或分类提供父类（宿主类）的私有%20API.md)
+* [3.向子类或分类提供父类（宿主类）的私有 API](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜向子类或分类提供父类（宿主类）的私有%20API.md)
 
 Block
 * [1.避免在 block 内部直接使用成员变量](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/Block｜避免在%20block%20内部直接使用成员变量.md)
