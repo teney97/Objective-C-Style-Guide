@@ -46,9 +46,9 @@ if 语句
 枚举
 * [1.枚举在 switch 里的用法规范](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/枚举｜枚举在%20switch%20里的用法规范.md)
 
-头文件引入
-* [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜在类的头文件中尽量少引入其他头文件.md)
-* [2.头文件引入整理](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件引入｜头文件引入整理.md)
+头文件
+* [1.在类的头文件中尽量少引入其他头文件](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜在类的头文件中尽量少引入其他头文件.md)
+* [2.头文件引入整理](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/头文件｜头文件引入整理.md)
 
 Block
 * [1.避免在 block 内部直接使用成员变量](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/Block｜避免在%20block%20内部直接使用成员变量.md)
