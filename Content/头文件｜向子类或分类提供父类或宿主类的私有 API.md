@@ -1,4 +1,4 @@
-## 向子类或分类提供父类（宿主类）的私有 API
+## 向子类/分类提供父类/宿主类的私有 API
 
 当在子类/分类中想要使用父类/宿主类的私有 API 时，我们不应该为了达成目的直接在父类的声明中 public 这些私有 API，这样破坏了类的封装性。可以参考 UIKit 中 UIGraphicsRenderer.h / UIGraphicsRendererSubclass.h、UIGestureRecognizer.h / UIGestureRecognizerSubclass.h 的做法。
 
