@@ -12,7 +12,7 @@
 * 你想在 Swift 中使用某个 Objective-C API 时，采用一些 Swift 的特有类型，比如元组（具体例子可以看 Example_Apple）
 * 你想在 Swift 中使用某个 Objective-C API 时，重新排列、组合、重命名参数等等，以使该 API 与其它 Swift API 更匹配
 * 利用 Swift 支持默认参数值的优势，来减少导入到 Swift 中的一组 Objective-C API 数量（具体例子可以看 Example_SDWebImage）
-* 解决 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期的问题。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_Other）
+* 解决 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期的问题。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等（具体例子可以看 Example_3）
 
 ### Example_Apple
 
@@ -170,7 +170,7 @@ extension UIImageView {
 * 可选枚举
 * 作为最后一个参数的 block
 
-### Example_Other
+### Example_3
 
 `NS_REFINED_FOR_SWIFT` 宏也可以用于解决 Swift 调用 Objective-C 的 API 时可能由于数据类型等不一致导致无法达到预期的问题。例如，Objective-C 里的方法采用了 C 风格的多参数类型；或者 Objective-C 方法返回 NSNotFound，在 Swift 中期望返回 nil 等等。
 
@@ -210,37 +210,55 @@ extension MyClass {
 }
 ```
 
-### NS_REFINED_FOR_SWIFT 宏对 Objective-C API 的重命名规则
+### Example_4
 
-`NS_REFINED_FOR_SWIFT` 可用于初始化方法、属性、其它方法。添加了 `NS_REFINED_FOR_SWIFT` 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
+将 Objective-C 的 `+ (instancetype)sharedInstance;` 方法在 Swift 中的变为 `shared` 属性。
 
-* 如果是初始化方法，则在其第一个参数标签前面加 "__"
-
-```swift
-// Objective-C API
-- (instancetype)initWithColor:(UIColor *)color NS_REFINED_FOR_SWIFT;
-// Use it in Swift
-let color = Color(__color: .red)
+```objectivec
+@interface MyClass : NSObject
++ (instancetype)sharedInstance NS_REFINED_FOR_SWIFT;
+@end
 ```
 
-* 其它方法，在方法名前面加 "__"
+```swift
+extension MyClass {
+    static var shared: MyClass {
+        return __sharedInstance()
+    }
+}
+```
+
+### NS_REFINED_FOR_SWIFT 宏对 Objective-C API 的重命名规则
+
+`NS_REFINED_FOR_SWIFT` 可用于方法和属性。添加了 `NS_REFINED_FOR_SWIFT` 的 Objective-C API 在导入到 Swift 时，具体的 API 重命名规则如下：
+
+* 对于初始化方法，在其第一个参数标签前面加 "__"
+
+```swift
+// Objective-C API
+- (instancetype)initWithClassName:(NSString *)name NS_REFINED_FOR_SWIFT;
+// In Swift
+init(__className: String)
+```
+
+* 对于其它方法，在其基名前面加 "__"
 
 
 ```swift
 // Objective-C API
-+ (void)method NS_REFINED_FOR_SWIFT;
-// Use it in Swift
-Color.__method()
+- (NSString *)displayNameForMode:(DisplayMode)mode NS_REFINED_FOR_SWIFT;
+// In Swift
+func __displayNameForMode(mode: DisplayMode) -> String
 ```
 
 * 下标方法将被视为任何其它方法，在方法名前面加 "__"，而不是作为 Swift 下标导入
-* 其他声明将在其名称前加上 "__"，例如属性：
+* 其他声明将在其名称前加上 "__"，例如属性
 
 ```swift
 // Objective-C API
-@property (nonatomic, copy) NSString *name NS_REFINED_FOR_SWIFT;
-// Use it in Swift
-object.__name = "zhangsan"
+@property DisplayMode mode NS_REFINED_FOR_SWIFT;
+// In Swift
+var __mode: DisplayMode { get set }
 ```
 
 > 注意：`NS_REFINED_FOR_SWIFT` 和 `NS_SWIFT_NAME` 一起用的话，`NS_REFINED_FOR_SWIFT` 不生效，而是以 `NS_SWIFT_NAME` 指定的名称重命名 Objective-C API。
