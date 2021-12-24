@@ -243,7 +243,6 @@ init(__className: String)
 
 * 对于其它方法，在其基名前面加 "__"
 
-
 ```swift
 // Objective-C API
 - (NSString *)displayNameForMode:(DisplayMode)mode NS_REFINED_FOR_SWIFT;
