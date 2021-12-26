@@ -36,7 +36,12 @@
 * [1.多用字面量语法，少用与之等价的方法](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/%E8%AF%AD%E6%B3%95%EF%BD%9C%E5%A4%9A%E7%94%A8%E5%AD%97%E9%9D%A2%E9%87%8F%E8%AF%AD%E6%B3%95%EF%BC%8C%E5%B0%91%E7%94%A8%E4%B8%8E%E4%B9%8B%E7%AD%89%E4%BB%B7%E7%9A%84%E6%96%B9%E6%B3%95%20.md)
 * [2.多用类型常量，少用 #define 预处理指令](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/语法｜多用类型常量，少用%20%23define%20预处理指令.md)
 
+API
+
+* [1.标记构造器为指定构造器](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/API｜标记构造器为指定构造器.md)
+
 if 语句
+
 * [1.使用 Yoda Condition，将常量前置，以避免手误将 == 写成 =](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜Yoda%20Condition.md)
 * [2.使用布尔表达式，而不是隐式地与 0 做对比](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜使用布尔表达式，而不是隐式地与%200%20做对比.md)
 * [3.复杂条件处理1 - 提高可调式性](https://github.com/teney97/Objective-C-Style-Guide/blob/main/Content/if%20语句｜复杂条件处理1%20-%20提高可调式性.md)
