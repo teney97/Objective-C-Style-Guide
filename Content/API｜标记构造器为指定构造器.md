@@ -1,6 +1,85 @@
+## Object Initialization
+
+初始化将对象的实例变量设置为合理且有用的初始值。它还可以分配和准备对象所需的其他全局资源，必要时从外部资源（如文件）加载它们。每个声明实例变量的对象都应该实现一个初始化方法 —— 除非默认的 set-everything-to-zero 初始化已经足够。如果一个对象没有实现初始化器，Cocoa 会调用最近的祖先的初始化器。
+
+### 构造器的形式
+
+NSObject 为构造器声明了 init 原型，它是一个返回 id（现在使用 instanceType）类型对象的实例方法。重写 init 对于不需要额外数据来初始化对象的子类来说是很好的。但是通常初始化依赖于外部数据来将对象设置为合理的初始状态。例如，假设您有一个 Account 类，正确初始化 Account 对象需要一个唯一的 account number 帐号，并且这个帐号必须提供给构造器。因此，构造器可以接受一个或多个参数，唯一的要求是初始化方法以字母 “init” 开头。（风格约定 init… 有时用来指构造器。)
+
+**注意**：子类除了实现一个带参数的构造器，还可以实现简单的 init 构造器，然后在初始化后立即使用 setter 访问器方法将对象设置为有用的初始状态。或者，如果子类使用属性，它可以在初始化后立即给属性赋值。
+
+Cocoa 有很多带参数的构造器示例：
+
+```objectivec
+- (id)initWithArray:(NSArray *)array; (from NSSet)
+- (id)initWithTimeInterval:(NSTimeInterval)secsToBeAdded sinceDate:(NSDate *)anotherDate; (from NSDate)
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)aStyle backing:(id)bufferingType defer:(BOOL)flag; (from NSWindow)
+- (id)initWithFrame:(NSRect)frameRect; (from NSControl and NSView)
+```
+
+这些构造器是以 “init” 开头的实例方法，并返回一个动态类型 id 对象（现在使用 instanceType）。除此之外，它们遵循 Cocoa 对多参数方法的约定，通常在第一个也是最重要的参数之前使用 `With` Type: 或 `From` Source: 。
+
+### 构造器问题
+
+虽然 init... 方法的方法签名要求返回一个对象，它不一定是最近分配的对象 —— 也就是 init... 消息的接收者。换句话说，，你从构造器获得的对象可能不是你认为的正在被初始化的对象。
+
+有两个条件提示返回除了刚刚分配的对象之外的其他对象。第一种情况涉及到两种相关的情况：当必须有一个单例实例时，或者当对象的定义属性必须是唯一的时。一些 Cocoa 类 —— 例如 NSWorkspace —— 在一个程序中只允许一个实例。在这种情况下，类必须确保（在构造中，或者更可能的是在类工厂方法中）只创建一个实例，如果有任何对新实例的进一步请求，则返回这个实例。
+
+当一个对象需要具有使唯一的属性时，也会出现类似的情况。回想一下前面提到的假设的 Account 类。任何类型的帐户都必须具有唯一标识符。如果这个类的初始化器（比如 initWithAccountID: ) 传递了一个已经与对象关联的标识符，它必须做两件事:
+
+* 释放新分配的对象（在内存管理的代码中）
+* 返回先前使用此唯一标识符初始化的 Account 对象
+
+通过这样做，构造器确保标识符的唯一性，同时提供被请求的内容：带有被请求标识符的 Account 实例。
+
+有时候一个 init... 方法无法执行所请求的初始化。例如，initFromFile: 方法期望从文件的内容中初始化一个对象，文件的路径作为参数传递。但如果该位置不存在文件，则无法初始化该对象。如果传递给 initWithArray: 构造器的是 NSDictionary 对象而不是 NSArray 对象，也会发生类似的问题。当一个 init... 构造器不能初始化对象，它应该：
+
+* 释放新分配的对象（在内存管理的代码中）
+* 返回 nil
+
+从构造器返回 nil 表示不能创建请求的对象。当你创建一个对象时，你通常应该在继续之前检查返回值是否为 nil :
+
+```objectivec
+id anObject = [[MyClass alloc] init];
+if (anObject) {
+    [anObject doSomething];
+    // more messages...
+} else {
+    // handle error
+}
+```
+
+因为一个 init... 方法可能返回 nil 或其他对象，使用由 alloc 或 allocWithZone 返回的实例而不是由构造器返回的实例是危险的。考虑以下代码:
+
+```objectivec
+id myObject = [MyClass alloc];
+[myObject init];
+[myObject doSomething];
+```
+
+这个例子中的 init 方法可以返回 nil，也可以替换一个不同的对象。因为您可以向 nil 发送消息而不引发异常，所以在前一种情况下，除了（可能）调试方面的麻烦之外，什么也不会发生。但是，你应该始终依赖于已初始化的实例，而不是刚刚分配的“原始”实例。因此，你应该将 alloc 消息嵌套在 init 消息中（如 [][MyClass alloc] init]），并在继续之前测试从构造器返回的对象。
+
+```objectivec
+id myObject = [[MyClass alloc] init];
+if ( myObject ) {
+    [myObject doSomething];
+} else {
+    // error recovery...
+}
+```
+
+一旦一个对象被初始化，你就不应该再初始化它。如果尝试重新初始化，实例化对象的框架类通常会引发异常。例如，本例中的第二次初始化将导致引发 NSInvalidArgumentException 异常。
+
+```objectivec
+NSString *aStr = [[NSString alloc] initWithString:@"Foo"];
+aStr = [aStr initWithString:@"Bar"];
+```
+
+
+
 ## 标记构造器为指定构造器
 
-在 Objective-C 中，对象初始化是基于指定构造器的概念。指定构造器负责调用其父类的一个指定构造器，然后初始化自己的实例变量。非指定构造器的构造器成为便利构造器，便利构造器通常代理到另一个构造器，并最终在指定构造器处终止链，而不是自己执行初始化。
+在 Objective-C 中，对象初始化是基于指定构造器的概念。指定构造器负责调用其父类的一个指定构造器，然后初始化自己的实例变量。非指定构造器的构造器是便利构造器，便利构造器通常代理到另一个构造器，并最终在指定构造器处终止链，而不是自己执行初始化。
 
 这里所说的构造器也就是 init 系列的任何方法；指定构造器（Designated initializer）通常就是接收全部初始化参数的全能构造器；便利构造器（Convenience (or Secondary) initializer）通常为接收部分初始化参数的构造器，它们调用当前类的其它构造器，并为一些参数赋默认值。
 
