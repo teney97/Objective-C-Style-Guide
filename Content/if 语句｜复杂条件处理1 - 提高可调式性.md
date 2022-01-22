@@ -10,7 +10,7 @@ if ([obj1 isSuccess] || [obj2 isSuccess] || [obj3 isSuccess] && [obj3 isSupport]
 
 复杂条件会使你不知道是哪个子条件成立而使整个 if 条件成立，可调式性差。
 
-在解决如何提高可调式性问题前，让我们先给 `[obj3 isSuccess] && [obj3 isSupport]` 加对 `()` 来明确运算符的优先级，以提高代码的可读性，虽然它并非必要，因为我们都知道 `&&` 优先级高于 `||`。
+在解决如何提高可调式性问题前，让我们先给 `[obj3 isSuccess] && [obj3 isSupport]` 加对 `()` 来明确运算符的优先级，以提高代码的可读性（可读性 > 简洁性），虽然它并非必要，因为我们都知道 `&&` 优先级高于 `||`。
 
 ```objc
 if ([obj1 isSuccess] || [obj2 isSuccess] || ([obj3 isSuccess] && [obj3 isSupport])) {
@@ -50,3 +50,4 @@ if ([obj1 isSuccess]
     || ([obj3 isSuccess] && [obj3 isSupport])) {
     // ...
 }
+```
