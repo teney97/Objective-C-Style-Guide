@@ -163,7 +163,7 @@ Task 类可能包括便利构造器，这些构造器只是调用指定构造器
 }
  
 - (id)init {
-    return [self initWithTitle:@”Task”];
+    return [self initWithTitle:@"Task"];
 }
 ```
 
@@ -218,18 +218,18 @@ Demo：
 
 ```objectivec
 @interface MyClass : NSObject
-- (instancetype)initWithTitle:(nullable NSString *)title subTitle:(nullable NSString *)subTitle NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTitle:(nullable NSString *)title subtitle:(nullable NSString *)subtitle NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithTitle:(nullable NSString *)title;
 - (instancetype)init;
 @end
   
 @implementation MyClass
   
-- (instancetype)initWithTitle:(nullable NSString *)title subTitle:(nullable NSString *)subTitle {
+- (instancetype)initWithTitle:(nullable NSString *)title subtitle:(nullable NSString *)subtitle {
     self = [super init]; // [规则1] 指定构造器只能向上代理到父类指定构造器，否则会得到编译器警告：Designated initializer should only invoke a designated initializer on 'super'
     if (self) {
-        _title = title;
-        _subTitle = subTitle;
+        _title = [title copy];
+        _subtitle = [subtitle copy];
     }
     return self;
 }
@@ -243,13 +243,13 @@ Demo：
     	- Convenience initializer missing a 'self' call to another initializer
     	- Convenience initializer should not invoke an initializer on 'super'
  */
-    return [self initWithTitle:title subTitle:nil];
+    return [self initWithTitle:title subtitle:nil];
 }
 
 // [规则3] 如果子类提供了指定构造器，那么需要重写所有父类的指定构造器为子类的便利构造器，保证子类新增的实例变量能够被正确初始化，以让构造过程更完整。
 // 这里需要重写 -init，否则会得到编译器警告：Method override for the designated initializer of the superclass '-init' not found
 - (instancetype)init {
-    return [self initWithTitle:nil subTitle:nil];
+    return [self initWithTitle:nil];
 }
 
 @end
